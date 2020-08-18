@@ -24,12 +24,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //Создаем список фейковых дней
-        ArrayList<Weather> weathers = new ArrayList<>();
-        weathers.add(new Weather(12491212, 28, 34, 34, 2, 45, "description1", "icon12"));
-        weathers.add(new Weather(12491213, 21, 2, 65, 3, 32, "description2", "icon13"));
-        weathers.add(new Weather(12491214, 25, 12, 4, 4, 12, "description3", "icon14"));
-        weathers.add(new Weather(12491215, 31, 4, 34, 9, 2, "description4", "icon15"));
-
+        ArrayList<Weather> weathers = QueryUtils.extractWeaters();
 
         ListView weatherListView = (ListView) findViewById(R.id.list);
 
