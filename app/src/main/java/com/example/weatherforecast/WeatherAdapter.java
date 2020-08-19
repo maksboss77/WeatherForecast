@@ -28,66 +28,38 @@ public class WeatherAdapter extends ArrayAdapter<Weather> {
         super(context, resource, weathers);
     }
 
-    @NonNull
-    @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
-        Weather currentWeather = getItem(index);
-
-        String date = getDateString(currentWeather.getDate());
-        String icon = currentWeather.getIcon();
-        int temp = currentWeather.getTemp();
-
-        if (prevDate.isEmpty()) {
-            prevDate = date;
-        }
-
-
-        while (date.equals(prevDate)) {
-            averageTemp += temp;
-            countTemp++;
-            index++;
-
-            if (index == getCount()) {
-                index--;
-                break;
-            }
-            currentWeather = getItem(index);
-            date = getDateString(currentWeather.getDate());
-            icon = currentWeather.getIcon();
-            temp = currentWeather.getTemp();
-        }
-
-        // Get average temp for the day
-        averageTemp /= countTemp;
-
-        View listItemView = convertView;
-        if (listItemView == null) {
-            listItemView = LayoutInflater.from(getContext()).inflate(
-                    R.layout.weather_list_item, parent, false);
-        }
-
-        TextView dateView = (TextView) listItemView.findViewById(R.id.date);
-        dateView.setText(prevDate);
-
-        TextView iconView = (TextView) listItemView.findViewById(R.id.icon);
-        iconView.setText(icon);
-
-        TextView tempView = (TextView) listItemView.findViewById(R.id.temp);
-        tempView.setText(String.valueOf(averageTemp));
-
-        // Assign a new date to the previous date
-        prevDate = date;
-        averageTemp = 0;
-        countTemp = 0;
-
-        return listItemView;
-    }
-
-
 //    @NonNull
 //    @Override
 //    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+//
+//        Weather currentWeather = getItem(index);
+//
+//        String date = getDateString(currentWeather.getDate());
+//        String icon = currentWeather.getIcon();
+//        int temp = currentWeather.getTemp();
+//
+//        if (prevDate.isEmpty()) {
+//            prevDate = date;
+//        }
+//
+//
+//        while (date.equals(prevDate)) {
+//            averageTemp += temp;
+//            countTemp++;
+//            index++;
+//
+//            if (index == getCount()) {
+//                index--;
+//                break;
+//            }
+//            currentWeather = getItem(index);
+//            date = getDateString(currentWeather.getDate());
+//            icon = currentWeather.getIcon();
+//            temp = currentWeather.getTemp();
+//        }
+//
+//        // Get average temp for the day
+//        averageTemp /= countTemp;
 //
 //        View listItemView = convertView;
 //        if (listItemView == null) {
@@ -95,20 +67,48 @@ public class WeatherAdapter extends ArrayAdapter<Weather> {
 //                    R.layout.weather_list_item, parent, false);
 //        }
 //
-//        Weather currentWeather = getItem(position);
-//
 //        TextView dateView = (TextView) listItemView.findViewById(R.id.date);
-//        dateView.setText(String.valueOf(currentWeather.getDate()));
+//        dateView.setText(prevDate);
 //
 //        TextView iconView = (TextView) listItemView.findViewById(R.id.icon);
-//        iconView.setText(currentWeather.getIcon());
+//        iconView.setText(icon);
 //
 //        TextView tempView = (TextView) listItemView.findViewById(R.id.temp);
-//        tempView.setText(String.valueOf(currentWeather.getTemp()));
+//        tempView.setText(String.valueOf(averageTemp));
 //
+//        // Assign a new date to the previous date
+//        prevDate = date;
+//        averageTemp = 0;
+//        countTemp = 0;
 //
 //        return listItemView;
 //    }
+
+
+    @NonNull
+    @Override
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+
+        View listItemView = convertView;
+        if (listItemView == null) {
+            listItemView = LayoutInflater.from(getContext()).inflate(
+                    R.layout.weather_list_item, parent, false);
+        }
+
+        Weather currentWeather = getItem(position);
+
+        TextView dateView = (TextView) listItemView.findViewById(R.id.date);
+        dateView.setText(getDateString(currentWeather.getDate()));
+
+        TextView iconView = (TextView) listItemView.findViewById(R.id.icon);
+        iconView.setText(currentWeather.getIcon());
+
+        TextView tempView = (TextView) listItemView.findViewById(R.id.temp);
+        tempView.setText(String.valueOf(currentWeather.getTemp()));
+
+
+        return listItemView;
+    }
 
     private String getDateString(long timeInMilliseconds) {
 
