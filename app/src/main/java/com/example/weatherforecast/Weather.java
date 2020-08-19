@@ -3,7 +3,7 @@ package com.example.weatherforecast;
 public class Weather {
 
     // Дата (Primary Key)
-    private int mDate;
+    private long mDate;
 
     // Температура
     private int mTemp;
@@ -40,7 +40,7 @@ public class Weather {
 
     }
 
-    public int getDate() { return mDate; }
+    public long getDate() { return mDate; }
 
     public int getTemp() { return mTemp; }
 

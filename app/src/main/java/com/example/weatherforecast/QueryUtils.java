@@ -43,15 +43,19 @@ public final class QueryUtils {
 
                 JSONObject mainObject = currentWeatherObject.getJSONObject("main");
                 int temp = mainObject.getInt("temp");
+
                 int pressure = mainObject.getInt("pressure");
+
                 int humidity = mainObject.getInt("humidity");
+
 
                 JSONArray weatherList = currentWeatherObject.getJSONArray("weather");
                 String description = "";
                 String icon = "";
                 for (int j = 0; j < weatherList.length(); j++) {
-                    JSONObject currentWeatherListObject = weatherList.getJSONObject(i);
+                    JSONObject currentWeatherListObject = weatherList.getJSONObject(j);
                     description = currentWeatherListObject.getString("description");
+
                     icon = currentWeatherListObject.getString("icon");
 
                 }
