@@ -30,4 +30,13 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    def work_version = "2.4.0"
+    // (Java only)
+    implementation "androidx.work:work-runtime:$work_version"
+
+    // Для загрузки изображений по URL
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    // Skip this if you don't want to use integration libraries or configure Glide.
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
 }
