@@ -2,7 +2,9 @@ package com.example.weatherforecast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
+import androidx.work.Data;
 import androidx.work.ListenableWorker;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
@@ -64,11 +66,10 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onChanged(WorkInfo workInfo) {
                         // Статус Worker'a
-                        System.out.println(workInfo.getState().name());
-
-                        if (workInfo.getState().name().equals("SUCCEEDED")) {
+                        System.out.println("Status Worker: " + workInfo.getState().name());
+                        if (workInfo.getState().isFinished()) {
                             weatherListView.setAdapter(adapter);
-                            System.out.println("\nЯ уже отрисовался");
+                            System.out.println("Я уже должен был отрисоваться");
                         }
                     }
                 });
