@@ -55,8 +55,10 @@ public class WeatherAdapter extends ArrayAdapter<Weather> {
 
 //        // Установка иконки по URL
         ImageView iconImage = listItemView.findViewById(R.id.icon_image);
-
-//        iconImage.setImageBitmap(bitmap);
+        Glide
+                .with(getContext())
+                .load(urlIconBegin + currentWeather.getIcon() + urlIconEnd)
+                .into(iconImage);
 
 
         TextView tempView = (TextView) listItemView.findViewById(R.id.temp);

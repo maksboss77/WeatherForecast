@@ -27,6 +27,7 @@ public class Weather {
     private String mIcon;
 
 
+
     public Weather(long date, int temp, int pressure, int clouds, int windSpeed,
                    int humidity, String description, String icon) {
         mDate = date;

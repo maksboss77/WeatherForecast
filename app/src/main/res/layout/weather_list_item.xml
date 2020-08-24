@@ -14,28 +14,28 @@
         <TextView
             android:id="@+id/date"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="25dp"
             android:layout_weight="1"
             tools:text="Сегодня" />
 
         <TextView
             android:id="@+id/icon"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="25dp"
             android:layout_weight="1"
             tools:text="Иконка" />
 
         <ImageView
             android:id="@+id/icon_image"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="25dp"
             android:layout_weight="1"
             />
 
         <TextView
             android:id="@+id/temp"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="25dp"
             android:layout_weight="1"
             tools:text="+17" />
 

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">WeatherForecast</string>
+    <string name="city">Новокузнецк</string>
+    <string name="temp_example">25°</string>
+    <string name="description_example">Облачно, без прояснений</string>
+    <string name="example">EXAMPLE</string>
 </resources>

@@ -36,7 +36,6 @@ public class UploadWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        System.out.println("Я вошел в воркер");
 
         MainActivity.weathers = QueryUtils.extractWeathers();
         MainActivity.weathersFiveDay = getFiveDays(MainActivity.weathers);
@@ -82,11 +81,11 @@ public class UploadWorker extends Worker {
                 countTemp++;
                 prevDateMilliseconds = weather.getDate();
             } else if (!date.equals(prevDate)) {
-                //TODO: Return average icon
 
                 int t = (int)Math.round(averageTemp/(countTemp*1.0));
 
                 int maxDifferent = 100;
+
                 for (int j = prevIndex; j < i; j++) {
                     Weather searchIcon = weatherArrayList.get(j);
 

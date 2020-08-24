@@ -16,7 +16,13 @@ import androidx.work.WorkerParameters;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,8 +39,11 @@ public class MainActivity extends AppCompatActivity {
     // Публичная переменная ListView
     public static ListView weatherListView;
 
-    //
+    // Adapter для отрисовки 5 дней
     public static WeatherAdapter adapter;
+
+    // Погода сейчас
+    public static Weather weather;
 
     /**
      * Текущая погода
@@ -53,14 +62,30 @@ public class MainActivity extends AppCompatActivity {
 
         weatherListView = (ListView) findViewById(R.id.list);
 
-//        WeatherAsyncTask task = new WeatherAsyncTask();
-//        task.execute();
+        // Погода за 5 дней
+        OneTimeWorkRequest uploadWorkRequest = new OneTimeWorkRequest.Builder(UploadWorker.class).build();
+        // Погода на текущий момент
+        OneTimeWorkRequest nowUploadWorkRequest = new OneTimeWorkRequest.Builder(NowUploadWorker.class).build();
 
-        WorkRequest uploadWorkRequest = new OneTimeWorkRequest.Builder(UploadWorker.class).build();
+        //Запускаем Worker в фоновом потоке, сначала получаем информацию на "Сейчас",
+        // потом загружается информация на 5 дней
+        WorkManager.getInstance(this)
+                .beginWith(nowUploadWorkRequest)
+                .then(uploadWorkRequest)
+                .enqueue();
 
-        //Запускаем Worker в фоновом потоке
-        WorkManager.getInstance(this).enqueue(uploadWorkRequest);
+        // Когда работа завершена, отрисовать текущую погоду
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(nowUploadWorkRequest.getId())
+                .observe(this, new Observer<WorkInfo>() {
+                    @Override
+                    public void onChanged(WorkInfo workInfo) {
+                        if (workInfo.getState().isFinished()) {
+                            getView();
+                        }
+                    }
+                });
 
+        // Отслеживание, когда работа завершена - отрисовать элементы списка
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(uploadWorkRequest.getId())
                 .observe(this, new Observer<WorkInfo>() {
                     @Override
@@ -76,6 +101,23 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void getView() {
+
+        ImageView iconImageView = (ImageView) findViewById(R.id.image_view_icon);
+        TextView tempTextView = (TextView) findViewById(R.id.text_view_temp);
+        TextView descTextView = (TextView) findViewById(R.id.text_view_description);
+
+        String urlIconBegin = "http://openweathermap.org/img/wn/";
+        String urlIconEnd = "@2x.png";
+
+        Glide
+                .with(this)
+                .load(urlIconBegin + weather.getIcon() + urlIconEnd)
+                .into(iconImageView);
+
+        tempTextView.setText(String.valueOf(weather.getTemp()));
+        descTextView.setText(String.valueOf(weather.getDescription()));
+    }
 
 
 }

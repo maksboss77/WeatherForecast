@@ -17,8 +17,10 @@ import java.util.ArrayList;
 public final class QueryUtils {
 
 
-    private static final String WEATHER_RESPONSE_URL =
+    private static final String FIVE_WEATHER_RESPONSE_URL =
             "http://api.openweathermap.org/data/2.5/forecast?q=Novokuznetsk,ru&lang=ru&units=metric&appid=31b762ad9bd0b94b1c2a3cecee08e837";
+    private static final String NOW_WEATHER_RESPONSE_URL =
+            "http://api.openweathermap.org/data/2.5/weather?q=Novokuznetsk,ru&lang=ru&units=metric&appid=31b762ad9bd0b94b1c2a3cecee08e837";
 
     // Частный конструктор - то есть никто не должен создавать экземпляр этого класса.
     private QueryUtils() {
@@ -31,7 +33,7 @@ public final class QueryUtils {
 
         try {
 
-            JSONObject baseJsonResponse = new JSONObject(getStringJSON(WEATHER_RESPONSE_URL));
+            JSONObject baseJsonResponse = new JSONObject(getStringJSON(FIVE_WEATHER_RESPONSE_URL));
             JSONArray weatherArrayList = baseJsonResponse.getJSONArray("list");
 
             for (int i = 0; i < weatherArrayList.length(); i++) {
@@ -76,6 +78,36 @@ public final class QueryUtils {
 
 
         return weathers;
+    }
+
+    public static Weather extractWeatherNow() {
+
+        Weather weather;
+
+        try {
+
+            JSONObject baseJsonResponse = new JSONObject(getStringJSON(NOW_WEATHER_RESPONSE_URL));
+
+            JSONArray weatherInfo = baseJsonResponse.getJSONArray("weather");
+            JSONObject weatherObject = weatherInfo.getJSONObject(0);
+            String description = weatherObject.getString("description");
+            String icon = weatherObject.getString("icon");
+
+            JSONObject mainObject = baseJsonResponse.getJSONObject("main");
+            int temp = mainObject.getInt("temp");
+
+            weather = new Weather(0, temp, 0, 0, 0, 0, description, icon);
+
+            return weather;
+
+        } catch (JSONException e) {
+            Log.e("QueryUtils", "Problem parsing the weather JSON results", e);
+        } catch (Exception e) {
+            Log.e("QueryUtils", "Problem URL connect", e);
+        }
+
+
+        return null;
     }
 
     public static String getStringJSON(String urlString) throws IOException {
