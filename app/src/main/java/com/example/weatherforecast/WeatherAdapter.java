@@ -54,19 +54,9 @@ public class WeatherAdapter extends ArrayAdapter<Weather> {
         iconView.setText(currentWeather.getIcon());
 
 //        // Установка иконки по URL
-//        ImageView iconImage = listItemView.findViewById(R.id.icon_image);
-//        FutureTarget<Bitmap> futureTarget = Glide.with(getContext()).asBitmap()
-//                .load(urlIconBegin + currentWeather.getIcon() + urlIconEnd).submit(10, 10);
-//        Bitmap bitmap = null;
-//        try {
-//            bitmap = futureTarget.get();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
+        ImageView iconImage = listItemView.findViewById(R.id.icon_image);
+
 //        iconImage.setImageBitmap(bitmap);
-//        Glide.with(getContext()).clear(futureTarget);
 
 
         TextView tempView = (TextView) listItemView.findViewById(R.id.temp);

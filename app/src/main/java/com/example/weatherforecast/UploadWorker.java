@@ -65,6 +65,8 @@ public class UploadWorker extends Worker {
         String icon;
         int temp;
 
+        int prevIndex = 0;
+
         for (int i = 0; i < weatherArrayList.size(); i++) {
 
             weather = weatherArrayList.get(i);
@@ -82,13 +84,35 @@ public class UploadWorker extends Worker {
             } else if (!date.equals(prevDate)) {
                 //TODO: Return average icon
 
+                int t = (int)Math.round(averageTemp/(countTemp*1.0));
 
-                Weather averageWeather = new Weather(prevDateMilliseconds, averageTemp/countTemp,
-                        0, 0, 0, 0, "", icon);
+                int maxDifferent = 100;
+                for (int j = prevIndex; j < i; j++) {
+                    Weather searchIcon = weatherArrayList.get(j);
+
+                    if (Math.abs(searchIcon.getTemp() - t) < maxDifferent) {
+                        maxDifferent = Math.abs(searchIcon.getTemp() - t);
+                        icon = searchIcon.getIcon();
+                    }
+
+                    System.out.println("[" + i + "," + j + "] = " + "icon:" + searchIcon.getIcon() + ", temp: " + searchIcon.getTemp());
+                }
+
+                Weather averageWeather = new Weather(
+                        prevDateMilliseconds,
+                        t,
+                        0,
+                        0,
+                        0,
+                        0,
+                        "",
+                        icon);
+
                 fiveWeather.add(averageWeather);
-                averageTemp = 0;
-                countTemp = 0;
+                averageTemp = weather.getTemp();
+                countTemp = 1;
                 prevDate = date;
+                prevIndex = i;
             } else {
                 averageTemp += temp;
                 countTemp++;
