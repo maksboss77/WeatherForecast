@@ -38,7 +38,7 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Получить индекс нажатого элемента
-        index = getIntent().getExtras().getInt("position");
+        index = getIntent().getExtras().getInt("index");
 
         setContentView(R.layout.activity_detail);
 

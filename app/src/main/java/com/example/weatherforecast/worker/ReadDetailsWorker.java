@@ -48,7 +48,7 @@ public class ReadDetailsWorker extends Worker {
         calendar.add(Calendar.HOUR_OF_DAY, +1);
         System.out.println("START DAY: " + (calendar.getTimeInMillis()/1000));
         startDay = calendar.getTimeInMillis()/1000;
-        calendar.add(Calendar.DAY_OF_MONTH, index + 1);
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
         calendar.add(Calendar.HOUR_OF_DAY, -3);
         System.out.println("END DAY: " + (calendar.getTimeInMillis()/1000));
         endDay = calendar.getTimeInMillis()/1000;
