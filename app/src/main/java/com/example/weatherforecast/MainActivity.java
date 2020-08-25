@@ -106,12 +106,23 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(addDatabaseWork.getId())
+                .observe(this, new Observer<WorkInfo>() {
+                    @Override
+                    public void onChanged(WorkInfo workInfo) {
+                        if (workInfo.getState().isFinished()) {
+//                            showToast((ArrayList<Weather>) weatherDao.getAll());
+                        }
+                    }
+                });
 
         // Отслеживание нажатий по элементам
         weatherListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startActivity(new Intent(MainActivity.this, Detail.class));
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                intent.putExtra("index", position);
+                startActivity(intent);
             }
         });
 
@@ -139,14 +150,15 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, builder.toString(), Toast.LENGTH_SHORT).show();
     }
 
+    String urlIconBegin = "http://openweathermap.org/img/wn/";
+    String urlIconEnd = "@2x.png";
+
     private void getView() {
 
         ImageView iconImageView = (ImageView) findViewById(R.id.image_view_icon);
         TextView tempTextView = (TextView) findViewById(R.id.text_view_temp);
         TextView descTextView = (TextView) findViewById(R.id.text_view_description);
 
-        String urlIconBegin = "http://openweathermap.org/img/wn/";
-        String urlIconEnd = "@2x.png";
 
         Glide
                 .with(this)

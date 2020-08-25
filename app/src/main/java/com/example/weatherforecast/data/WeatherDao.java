@@ -1,5 +1,7 @@
 package com.example.weatherforecast.data;
 
+import android.widget.ListView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,9 +23,13 @@ public interface WeatherDao {
     @Query("SELECT * FROM weather WHERE dt IN (:mDateId)")
     List<Weather> loadAllByDates(int[] mDateId);
 
+//    /** Вывести информацию по конкретному дню */
+//    @Query("SELECT * FROM weather WHERE (dt >= :startDate AND dt < :endDate)")
+//    List<Weather> findByDate(int startDate, int endDate);
+
     /** Вывести информацию по конкретному дню */
-    @Query("SELECT * FROM weather WHERE dt > :startDate AND dt < :endDate")
-    Weather findByName(int startDate, int endDate);
+    @Query("SELECT * FROM weather WHERE dt BETWEEN :startDate AND :endDate")
+    List<Weather> testQuery(long startDate, long endDate);
 
     /** Вставка информации в таблицу */
     @Insert(onConflict = OnConflictStrategy.REPLACE) // Если есть конфликт по ID, то просто заменит на новое значение

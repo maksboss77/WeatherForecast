@@ -40,7 +40,7 @@ public final class QueryUtils {
 
             for (int i = 0; i < weatherArrayList.length(); i++) {
                 JSONObject currentWeatherObject = weatherArrayList.getJSONObject(i);
-                int date = currentWeatherObject.getInt("dt");
+                long date = currentWeatherObject.getLong("dt");
 
                 JSONObject mainObject = currentWeatherObject.getJSONObject("main");
                 int temp = mainObject.getInt("temp");

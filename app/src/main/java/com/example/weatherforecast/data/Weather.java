@@ -10,7 +10,7 @@ public class Weather {
     // Дата (Primary Key)
     @PrimaryKey
     @ColumnInfo(name = "dt")
-    private int mDate;
+    private long mDate;
 
     // Температура
     @ColumnInfo(name = "temp")
@@ -42,7 +42,7 @@ public class Weather {
 
 
 
-    public Weather(int date, int temp, int pressure, int clouds, int windSpeed,
+    public Weather(long date, int temp, int pressure, int clouds, int windSpeed,
                    int humidity, String description, String icon) {
         mDate = date;
         mTemp = temp;
@@ -55,7 +55,7 @@ public class Weather {
 
     }
 
-    public int getDate() {
+    public long getDate() {
         return mDate;
     }
 

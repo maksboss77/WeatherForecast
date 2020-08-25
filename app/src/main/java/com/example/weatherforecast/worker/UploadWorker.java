@@ -40,7 +40,7 @@ public class UploadWorker extends Worker {
 
     // Previous day
     private String prevDate = "";
-    private int prevDateMilliseconds = 0;
+    private long prevDateMilliseconds = 0;
 
     private ArrayList<Weather> getFiveDays(ArrayList<Weather> weatherArrayList ) {
 
@@ -70,7 +70,7 @@ public class UploadWorker extends Worker {
                 prevDateMilliseconds = weather.getDate();
             } else if (!date.equals(prevDate)) {
 
-                int t = (int)Math.round(averageTemp/(countTemp*1.0));
+                int t = (int) Math.round(averageTemp/(countTemp*1.0));
 
                 int maxDifferent = 100;
 
@@ -114,7 +114,7 @@ public class UploadWorker extends Worker {
 
     }
 
-    private String getDateString(int timeInMilliseconds) {
+    private String getDateString(long timeInMilliseconds) {
 
         Calendar today = Calendar.getInstance();
         Calendar calendar = Calendar.getInstance();

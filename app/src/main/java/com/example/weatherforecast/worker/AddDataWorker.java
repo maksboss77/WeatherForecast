@@ -4,6 +4,9 @@ import android.content.Context;
 
 import com.example.weatherforecast.AppDelegate;
 import com.example.weatherforecast.MainActivity;
+import com.example.weatherforecast.data.Weather;
+
+import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
@@ -21,7 +24,7 @@ public class AddDataWorker extends Worker {
         MainActivity.weatherDao = ((AppDelegate) getApplicationContext())
                 .getWeatherDatabase().getWeatherDao();
         MainActivity.weatherDao.insert(MainActivity.weathers);
-
+        System.out.println((ArrayList<Weather>) MainActivity.weatherDao.getAll());
         return Result.success();
     }
 }
