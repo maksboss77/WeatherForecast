@@ -1,29 +1,14 @@
 package com.example.weatherforecast;
 
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import com.example.weatherforecast.data.Weather;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
-import java.util.UUID;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
-import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.ExistingWorkPolicy;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.Operation;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkContinuation;
-import androidx.work.WorkInfo;
-import androidx.work.WorkManager;
-import androidx.work.WorkQuery;
-import androidx.work.WorkRequest;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -52,7 +37,7 @@ public class UploadWorker extends Worker {
 
     // Previous day
     private String prevDate = "";
-    private long prevDateMilliseconds = 0;
+    private int prevDateMilliseconds = 0;
 
     private ArrayList<Weather> getFiveDays(ArrayList<Weather> weatherArrayList ) {
 
@@ -126,7 +111,7 @@ public class UploadWorker extends Worker {
 
     }
 
-    private String getDateString(long timeInMilliseconds) {
+    private String getDateString(int timeInMilliseconds) {
 
         Calendar today = Calendar.getInstance();
         Calendar calendar = Calendar.getInstance();

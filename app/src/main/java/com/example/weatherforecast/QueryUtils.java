@@ -2,6 +2,8 @@ package com.example.weatherforecast;
 
 import android.util.Log;
 
+import com.example.weatherforecast.data.Weather;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

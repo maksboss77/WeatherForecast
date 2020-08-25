@@ -37,5 +37,11 @@ dependencies {
     // Для загрузки изображений по URL
     implementation 'com.github.bumptech.glide:glide:4.11.0'
 
+    // Сохранение данных в БД
+    def room_version = "2.2.5"
+
+    // For Room
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
 
 }

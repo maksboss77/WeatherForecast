@@ -1,32 +1,26 @@
 package com.example.weatherforecast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
-import androidx.work.Data;
-import androidx.work.ListenableWorker;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
-import androidx.work.WorkRequest;
-import androidx.work.Worker;
-import androidx.work.WorkerParameters;
 
-import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.weatherforecast.data.Weather;
+import com.example.weatherforecast.data.WeatherDao;
+import com.example.weatherforecast.data.WeatherDatabase;
 
-import org.w3c.dom.Text;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
 
     // Погода сейчас
     public static Weather weather;
+
+    //
+    private WeatherDao weatherDao;
 
     /**
      * Текущая погода
@@ -94,11 +91,34 @@ public class MainActivity extends AppCompatActivity {
                         System.out.println("Status Worker: " + workInfo.getState().name());
                         if (workInfo.getState().isFinished()) {
                             weatherListView.setAdapter(adapter);
-                            System.out.println("Я уже должен был отрисоваться");
+
+                            weatherDao = ((AppDelegate) getApplicationContext())
+                                    .getWeatherDatabase().getWeatherDao();
+                            weatherDao.insert(weathers);
+
                         }
                     }
                 });
 
+        Button queryButton = (Button) findViewById(R.id.button_query);
+        queryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showToast((ArrayList<Weather>) weatherDao.getAll());
+                System.out.println((ArrayList<Weather>) weatherDao.getAll());
+            }
+        });
+
+
+    }
+
+    private void showToast(ArrayList<Weather> all) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < all.size(); i++) {
+            builder.append(all.get(i).toString()).append("\n");
+        }
+
+        Toast.makeText(this, builder.toString(), Toast.LENGTH_SHORT).show();
     }
 
     private void getView() {
