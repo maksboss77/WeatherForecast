@@ -1,7 +1,10 @@
-package com.example.weatherforecast;
+package com.example.weatherforecast.worker;
 
 import android.content.Context;
 
+import com.example.weatherforecast.MainActivity;
+import com.example.weatherforecast.QueryUtils;
+import com.example.weatherforecast.WeatherAdapter;
 import com.example.weatherforecast.data.Weather;
 
 import java.text.SimpleDateFormat;

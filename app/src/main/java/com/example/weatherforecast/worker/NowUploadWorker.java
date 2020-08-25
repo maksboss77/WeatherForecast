@@ -1,6 +1,9 @@
-package com.example.weatherforecast;
+package com.example.weatherforecast.worker;
 
 import android.content.Context;
+
+import com.example.weatherforecast.MainActivity;
+import com.example.weatherforecast.QueryUtils;
 
 import androidx.annotation.NonNull;
 import androidx.work.Worker;

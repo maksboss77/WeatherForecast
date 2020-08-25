@@ -6,8 +6,10 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -17,10 +19,11 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.weatherforecast.data.Weather;
 import com.example.weatherforecast.data.WeatherDao;
-import com.example.weatherforecast.data.WeatherDatabase;
+import com.example.weatherforecast.worker.AddDataWorker;
+import com.example.weatherforecast.worker.NowUploadWorker;
+import com.example.weatherforecast.worker.UploadWorker;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     public static Weather weather;
 
     //
-    private WeatherDao weatherDao;
+    public static WeatherDao weatherDao;
 
     /**
      * Текущая погода
@@ -63,12 +66,15 @@ public class MainActivity extends AppCompatActivity {
         OneTimeWorkRequest uploadWorkRequest = new OneTimeWorkRequest.Builder(UploadWorker.class).build();
         // Погода на текущий момент
         OneTimeWorkRequest nowUploadWorkRequest = new OneTimeWorkRequest.Builder(NowUploadWorker.class).build();
+        // Заполнение БД данными о погоде
+        OneTimeWorkRequest addDatabaseWork = new OneTimeWorkRequest.Builder(AddDataWorker.class).build();
 
         //Запускаем Worker в фоновом потоке, сначала получаем информацию на "Сейчас",
         // потом загружается информация на 5 дней
         WorkManager.getInstance(this)
                 .beginWith(nowUploadWorkRequest)
                 .then(uploadWorkRequest)
+                .then(addDatabaseWork)
                 .enqueue();
 
         // Когда работа завершена, отрисовать текущую погоду
@@ -92,18 +98,30 @@ public class MainActivity extends AppCompatActivity {
                         if (workInfo.getState().isFinished()) {
                             weatherListView.setAdapter(adapter);
 
-                            weatherDao = ((AppDelegate) getApplicationContext())
-                                    .getWeatherDatabase().getWeatherDao();
-                            weatherDao.insert(weathers);
+//                            weatherDao = ((AppDelegate) getApplicationContext())
+//                                    .getWeatherDatabase().getWeatherDao();
+//                            weatherDao.insert(weathers);
 
                         }
                     }
                 });
 
+
+        // Отслеживание нажатий по элементам
+        weatherListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                startActivity(new Intent(MainActivity.this, Detail.class));
+            }
+        });
+
+        /** TODO:УДАЛИТЬ ПОСЛЕ УСПЕШНОГО ВЫВОДА В ДЕТАЛИ */
         Button queryButton = (Button) findViewById(R.id.button_query);
         queryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 showToast((ArrayList<Weather>) weatherDao.getAll());
                 System.out.println((ArrayList<Weather>) weatherDao.getAll());
             }

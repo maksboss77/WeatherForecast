@@ -18,7 +18,6 @@ public class AppDelegate extends Application {
                 getApplicationContext(),
                 WeatherDatabase.class,
                 "weather_database")
-                .allowMainThreadQueries()
                 .build();
     }
 
