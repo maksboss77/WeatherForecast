@@ -5,4 +5,9 @@
     <string name="description_example">Облачно, без прояснений</string>
     <string name="example">EXAMPLE</string>
     <string name="query">Query</string>
+
+    <string name="degree">°</string>
+    <string name="g_pascal">гПа</string>
+    <string name="percent">%</string>
+    <string name="m_s">м/с</string>
 </resources>

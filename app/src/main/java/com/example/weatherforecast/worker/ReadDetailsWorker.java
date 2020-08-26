@@ -3,6 +3,7 @@ package com.example.weatherforecast.worker;
 import android.content.Context;
 
 import com.example.weatherforecast.DetailActivity;
+import com.example.weatherforecast.DetailsAdapter;
 import com.example.weatherforecast.MainActivity;
 import com.example.weatherforecast.data.Weather;
 
@@ -31,7 +32,8 @@ public class ReadDetailsWorker extends Worker {
 
         getDate(DetailActivity.index);
         DetailActivity.detailsWeathers = (ArrayList<Weather>) MainActivity.weatherDao.testQuery(startDay, endDay);
-        System.out.println("TEST: " + (ArrayList<Weather>) MainActivity.weatherDao.testQuery(startDay, endDay));
+        System.out.println("TEST: " + DetailActivity.detailsWeathers);
+        DetailActivity.adapter = new DetailsAdapter(getApplicationContext(), 0, DetailActivity.detailsWeathers);
 
         return Result.success();
     }

@@ -7,4 +7,22 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="DetailsTextStyleMain">
+        <item name="android:layout_margin">16dp</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="DetailsTextStyleDescription">
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginRight">8dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="DetailsTextStyleAdditional">
+        <item name="android:layout_margin">16dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
 </resources>

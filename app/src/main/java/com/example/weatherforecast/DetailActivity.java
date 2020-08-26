@@ -1,6 +1,7 @@
 package com.example.weatherforecast;
 
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,7 +26,9 @@ import androidx.work.WorkManager;
 
 public class DetailActivity extends AppCompatActivity {
 
-    public ListView detailListView;
+    public static ListView detailListView;
+
+    public static DetailsAdapter adapter;
 
     public static ArrayList<Weather> detailsWeathers;
 
@@ -54,7 +57,9 @@ public class DetailActivity extends AppCompatActivity {
                     @Override
                     public void onChanged(WorkInfo workInfo) {
                         if (workInfo.getState().isFinished()) {
-                            //set Adapter
+
+                            detailListView.setAdapter(adapter);
+
                             for (int i = 0; i < detailsWeathers.size(); i++) {
                                 System.out.println("INDEX[" + i +"]: " + detailsWeathers.get(i).toString() + "\n\n");
                             }
@@ -64,26 +69,4 @@ public class DetailActivity extends AppCompatActivity {
 
     }
 
-    String urlIconBegin = "http://openweathermap.org/img/wn/";
-    String urlIconEnd = "@2x.png";
-
-//    private void getView() {
-//
-//        TextView dateTimeTextView = (TextView) findViewById(R.id.details_date_time);
-//        TextView tempTextView = (TextView) findViewById(R.id.details_temp);
-//        TextView pressureTextView = (TextView) findViewById(R.id.details_pressure);
-//        TextView cloudsTextView = (TextView) findViewById(R.id.details_clouds);
-//        TextView windTextView = (TextView) findViewById(R.id.details_wind);
-//        TextView humidityTextView = (TextView) findViewById(R.id.details_humidity);
-//        TextView descriptionTextView = (TextView) findViewById(R.id.details_description);
-//
-//
-//
-//        ImageView iconImageView = (ImageView) findViewById(R.id.details_icon);
-//        Glide
-//                .with(this)
-//                .load(urlIconBegin + detailsWeathers. + urlIconEnd)
-//                .into(iconImageView);
-//
-//     }
 }

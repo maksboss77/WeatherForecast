@@ -126,17 +126,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /** TODO:УДАЛИТЬ ПОСЛЕ УСПЕШНОГО ВЫВОДА В ДЕТАЛИ */
-        Button queryButton = (Button) findViewById(R.id.button_query);
-        queryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-                showToast((ArrayList<Weather>) weatherDao.getAll());
-                System.out.println((ArrayList<Weather>) weatherDao.getAll());
-            }
-        });
+//        /** TODO:УДАЛИТЬ ПОСЛЕ УСПЕШНОГО ВЫВОДА В ДЕТАЛИ */
+//        Button queryButton = (Button) findViewById(R.id.button_query);
+//        queryButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//
+//                showToast((ArrayList<Weather>) weatherDao.getAll());
+//                System.out.println((ArrayList<Weather>) weatherDao.getAll());
+//            }
+//        });
 
 
     }
