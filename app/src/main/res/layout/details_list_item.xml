@@ -54,7 +54,8 @@
                 android:layout_height="75dp"
                 android:layout_gravity="center"
                 android:layout_marginBottom="16dp"
-                android:contentDescription="@string/example" />
+                android:contentDescription="@string/example"/>
+
         </LinearLayout>
 
     </LinearLayout>

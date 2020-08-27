@@ -2,7 +2,10 @@ package com.example.weatherforecast;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -50,16 +53,19 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
 
         /** Установка кнопки "Назад", если делать через манифест, то страница перезагружается*/
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        ImageButton button = (ImageButton) findViewById(R.id.button_prev);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         // Установить заголовок, как дату
-        setTitle(getDate());
+        TextView title = (TextView) findViewById(R.id.text_title);
+        title.setText(getDate());
 
-        detailListView = (ListView) findViewById(R.id.list_details);
+        detailListView = (ListView) findViewById(R.id.list);
 
         // Отправить запрос в фоновом потоке на прочтение данных с базы
         OneTimeWorkRequest readDatabase = new OneTimeWorkRequest.Builder(ReadDetailsWorker.class).build();
@@ -97,14 +103,4 @@ public class DetailActivity extends AppCompatActivity {
         return simpleDateFormat.format(calendar.getTime());
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 }

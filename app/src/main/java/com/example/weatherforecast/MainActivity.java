@@ -1,5 +1,6 @@
 package com.example.weatherforecast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.work.Constraints;
@@ -9,8 +10,12 @@ import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 import androidx.work.Worker;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -176,11 +181,16 @@ public class MainActivity extends AppCompatActivity {
 
         // Отслеживание нажатий по элементам
         weatherListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+
+                Activity activity = MainActivity.this;
+
+                Intent intent = new Intent(activity, DetailActivity.class);
                 intent.putExtra("index", position);
-                startActivity(intent);
+                activity.startActivity(intent);
+
             }
         });
 

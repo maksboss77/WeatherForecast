@@ -12,4 +12,6 @@
     <string name="m_s">м/с</string>
 
     <string name="network_error">Отсутствует соединение с сетью</string>
+
+    <string name="anim">animation</string>
 </resources>
