@@ -1,10 +1,20 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/colorMain</item>
+        <item name="colorPrimaryDark">@color/colorMain</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppThemeMain" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorMain</item>
+        <item name="colorPrimaryDark">@color/colorMain</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <!--        Убрать шапку в приложении-->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="DetailsTextStyleMain">
@@ -23,6 +33,26 @@
         <item name="android:layout_gravity">center</item>
         <item name="android:layout_margin">8dp</item>
         <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="MainTitleStyle">
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:fontWeight" tools:targetApi="o">1000</item>
+    </style>
+
+    <style name="MainDescriptionStyle">
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:fontFamily" tools:targetApi="jelly_bean">sans-serif-condensed</item>
+        <item name="android:fontWeight" tools:targetApi="o">300</item>
+    </style>
+
+    <style name="MainListStyle">
+        <item name="android:textColor">@color/colorMain</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily" tools:targetApi="jelly_bean">sans-serif-condensed</item>
+        <item name="android:fontWeight" tools:targetApi="o">500</item>
     </style>
 
 </resources>

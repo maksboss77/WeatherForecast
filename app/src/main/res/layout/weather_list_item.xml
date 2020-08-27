@@ -15,21 +15,16 @@
             android:id="@+id/date"
             android:layout_width="0dp"
             android:layout_height="25dp"
-            android:layout_weight="1"
-            tools:text="Сегодня" />
-
-        <TextView
-            android:id="@+id/icon"
-            android:layout_width="0dp"
-            android:layout_height="25dp"
-            android:layout_weight="1"
-            tools:text="Иконка" />
+            android:layout_weight="3"
+            tools:text="Сегодня"
+            style="@style/MainListStyle"/>
 
         <ImageView
             android:id="@+id/icon_image"
             android:layout_width="0dp"
             android:layout_height="25dp"
             android:layout_weight="1"
+            style="@style/MainListStyle"
             />
 
         <TextView
@@ -37,7 +32,8 @@
             android:layout_width="0dp"
             android:layout_height="25dp"
             android:layout_weight="1"
-            tools:text="+17" />
+            tools:text="+17"
+            style="@style/MainListStyle"/>
 
 
     </LinearLayout>

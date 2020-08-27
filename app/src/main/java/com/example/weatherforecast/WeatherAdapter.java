@@ -40,10 +40,8 @@ public class WeatherAdapter extends ArrayAdapter<Weather> {
         Weather currentWeather = getItem(position);
 
         TextView dateView = (TextView) listItemView.findViewById(R.id.date);
+        assert currentWeather != null;
         dateView.setText(getDateString(currentWeather.getDate()));
-
-        TextView iconView = (TextView) listItemView.findViewById(R.id.icon);
-        iconView.setText(currentWeather.getIcon());
 
 //        // Установка иконки по URL
         ImageView iconImage = listItemView.findViewById(R.id.icon_image);
@@ -54,7 +52,8 @@ public class WeatherAdapter extends ArrayAdapter<Weather> {
 
 
         TextView tempView = (TextView) listItemView.findViewById(R.id.temp);
-        tempView.setText(String.valueOf(currentWeather.getTemp()));
+        tempView.setText(currentWeather.getTemp() +
+                getContext().getResources().getString(R.string.degree));
 
 
         return listItemView;

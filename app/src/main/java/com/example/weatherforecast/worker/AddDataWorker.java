@@ -7,6 +7,7 @@ import com.example.weatherforecast.MainActivity;
 import com.example.weatherforecast.data.Weather;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
@@ -21,10 +22,19 @@ public class AddDataWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
+
+        //сначала нужно отчистить бд от старых записей.
+
         MainActivity.weatherDao = ((AppDelegate) getApplicationContext())
                 .getWeatherDatabase().getWeatherDao();
+        MainActivity.weatherDao.deleteOldRow(getStartDay());
         MainActivity.weatherDao.insert(MainActivity.weathers);
         System.out.println((ArrayList<Weather>) MainActivity.weatherDao.getAll());
         return Result.success();
+    }
+
+    private long getStartDay() {
+
+        return Calendar.getInstance().getTimeInMillis()/1000;
     }
 }

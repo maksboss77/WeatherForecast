@@ -2,17 +2,21 @@ package com.example.weatherforecast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
+import androidx.work.Constraints;
+import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +26,7 @@ import com.example.weatherforecast.data.WeatherDao;
 import com.example.weatherforecast.worker.AddDataWorker;
 import com.example.weatherforecast.worker.NowUploadWorker;
 import com.example.weatherforecast.worker.UploadWorker;
+import com.example.weatherforecast.worker.CashDatabaseWorker;
 
 import java.util.ArrayList;
 
@@ -45,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     //
     public static WeatherDao weatherDao;
 
+    private boolean connect_status = false;
+
     /**
      * Текущая погода
      * http://api.openweathermap.org/data/2.5/weather?q=Novokuznetsk,ru&lang=ru&units=metric&appid=31b762ad9bd0b94b1c2a3cecee08e837
@@ -62,19 +69,46 @@ public class MainActivity extends AppCompatActivity {
 
         weatherListView = (ListView) findViewById(R.id.list);
 
+        // Критерий: подключен Wi-Fi или мобильная передача данных
+        Constraints constraints = new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build();
+
         // Погода за 5 дней
-        OneTimeWorkRequest uploadWorkRequest = new OneTimeWorkRequest.Builder(UploadWorker.class).build();
+        OneTimeWorkRequest uploadWorkRequest = new OneTimeWorkRequest
+                .Builder(UploadWorker.class)
+                .setConstraints(constraints)
+                .build();
         // Погода на текущий момент
-        OneTimeWorkRequest nowUploadWorkRequest = new OneTimeWorkRequest.Builder(NowUploadWorker.class).build();
+        OneTimeWorkRequest nowUploadWorkRequest = new OneTimeWorkRequest
+                .Builder(NowUploadWorker.class)
+                .setConstraints(constraints)
+                .build();
         // Заполнение БД данными о погоде
-        OneTimeWorkRequest addDatabaseWork = new OneTimeWorkRequest.Builder(AddDataWorker.class).build();
+        OneTimeWorkRequest addDatabaseWork = new OneTimeWorkRequest
+                .Builder(AddDataWorker.class)
+                .setConstraints(constraints)
+                .build();
+
+        // Заполнение БД данными о погоде
+        OneTimeWorkRequest cashDatabaseWork = new OneTimeWorkRequest
+                .Builder(CashDatabaseWorker.class)
+                .setConstraints(constraints)
+                .build();
 
         //Запускаем Worker в фоновом потоке, сначала получаем информацию на "Сейчас",
         // потом загружается информация на 5 дней
+
+        final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear_layout);
+        linearLayout.setVisibility(View.INVISIBLE);
+
+
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(ProgressBar.VISIBLE);
+
         WorkManager.getInstance(this)
                 .beginWith(nowUploadWorkRequest)
                 .then(uploadWorkRequest)
                 .then(addDatabaseWork)
+                .then(cashDatabaseWork)
                 .enqueue();
 
         // Когда работа завершена, отрисовать текущую погоду
@@ -111,7 +145,11 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onChanged(WorkInfo workInfo) {
                         if (workInfo.getState().isFinished()) {
-//                            showToast((ArrayList<Weather>) weatherDao.getAll());
+                            progressBar.setVisibility(ProgressBar.INVISIBLE);
+                            linearLayout.setVisibility(linearLayout.VISIBLE);
+
+                            // Меняем статус подключения к сети на истину
+                            connect_status = true;
                         }
                     }
                 });
@@ -125,18 +163,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-//        /** TODO:УДАЛИТЬ ПОСЛЕ УСПЕШНОГО ВЫВОДА В ДЕТАЛИ */
-//        Button queryButton = (Button) findViewById(R.id.button_query);
-//        queryButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//
-//                showToast((ArrayList<Weather>) weatherDao.getAll());
-//                System.out.println((ArrayList<Weather>) weatherDao.getAll());
-//            }
-//        });
 
 
     }
@@ -160,13 +186,22 @@ public class MainActivity extends AppCompatActivity {
         TextView descTextView = (TextView) findViewById(R.id.text_view_description);
 
 
-        Glide
-                .with(this)
-                .load(urlIconBegin + weather.getIcon() + urlIconEnd)
-                .into(iconImageView);
+        try {
+            Glide
+                    .with(this)
+                    .load(urlIconBegin + weather.getIcon() + urlIconEnd)
+                    .into(iconImageView);
 
-        tempTextView.setText(String.valueOf(weather.getTemp()));
-        descTextView.setText(String.valueOf(weather.getDescription()));
+            tempTextView.setText(weather.getTemp() + getApplicationContext().getResources().getString(R.string.degree));
+            descTextView.setText(String.valueOf(weather.getDescription()));
+        } catch (NullPointerException ex) {
+            Toast toast = Toast.makeText(
+                    getApplicationContext(),
+                    getApplicationContext().getResources().getString(R.string.network_error),
+                    Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+        }
     }
 
 

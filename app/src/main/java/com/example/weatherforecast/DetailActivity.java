@@ -1,6 +1,7 @@
 package com.example.weatherforecast;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -13,10 +14,14 @@ import com.example.weatherforecast.worker.ReadDetailsWorker;
 
 import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.work.OneTimeWorkRequest;
@@ -42,8 +47,17 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //Получить индекс нажатого элемента
         index = getIntent().getExtras().getInt("index");
-
         setContentView(R.layout.activity_detail);
+
+        /** Установка кнопки "Назад", если делать через манифест, то страница перезагружается*/
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        // Установить заголовок, как дату
+        setTitle(getDate());
 
         detailListView = (ListView) findViewById(R.id.list_details);
 
@@ -61,7 +75,7 @@ public class DetailActivity extends AppCompatActivity {
                             detailListView.setAdapter(adapter);
 
                             for (int i = 0; i < detailsWeathers.size(); i++) {
-                                System.out.println("INDEX[" + i +"]: " + detailsWeathers.get(i).toString() + "\n\n");
+                                System.out.println("INDEX[" + i + "]: " + detailsWeathers.get(i).toString() + "\n\n");
                             }
                         }
                     }
@@ -69,4 +83,28 @@ public class DetailActivity extends AppCompatActivity {
 
     }
 
+    private String getDate() {
+
+        if (index == 0)
+            return "Сегодня";
+        if (index == 1)
+            return "Завтра";
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, index);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
+        return simpleDateFormat.format(calendar.getTime());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }

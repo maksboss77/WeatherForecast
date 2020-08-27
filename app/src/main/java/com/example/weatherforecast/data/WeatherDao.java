@@ -42,4 +42,8 @@ public interface WeatherDao {
     /** Удаление записей из таблицы */
     @Delete
     void delete(Weather weather);
+
+    /** Удаление записей из таблицы */
+    @Query("DELETE FROM weather WHERE dt < :startDate")
+    void deleteOldRow(long startDate);
 }
