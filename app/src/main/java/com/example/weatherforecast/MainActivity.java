@@ -187,9 +187,27 @@ public class MainActivity extends AppCompatActivity {
 
                 Activity activity = MainActivity.this;
 
+                Bundle bundle = null;
+
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                    View v = activity.findViewById(R.id.date);
+                    if (v != null) {
+                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(activity, v, activity.getString(R.string.anim));
+                        bundle = options.toBundle();
+                    }
+                }
+
                 Intent intent = new Intent(activity, DetailActivity.class);
-                intent.putExtra("index", position);
-                activity.startActivity(intent);
+                                intent.putExtra("index", position);
+                if (bundle == null) {
+                    activity.startActivity(intent);
+                } else {
+                    activity.startActivity(intent, bundle);
+                }
+
+//                Intent intent = new Intent(activity, DetailActivity.class);
+//                intent.putExtra("index", position);
+//                activity.startActivity(intent);
 
             }
         });

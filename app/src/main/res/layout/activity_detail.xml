@@ -31,7 +31,8 @@
             style="@style/MainDescriptionStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/city" />
+            android:text="@string/city"
+            android:transitionName="@string/anim"/>
 
 
     </LinearLayout>

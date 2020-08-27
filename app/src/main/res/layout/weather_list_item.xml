@@ -17,7 +17,8 @@
             android:layout_height="25dp"
             android:layout_weight="3"
             tools:text="Сегодня"
-            style="@style/MainListStyle"/>
+            style="@style/MainListStyle"
+            android:transitionName="@string/anim"/>
 
         <ImageView
             android:id="@+id/icon_image"
