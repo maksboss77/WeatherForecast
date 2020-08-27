@@ -14,21 +14,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public final class QueryUtils {
 
-    // Average temperature for the day
-    private static int averageTemp;
-
-    // Count temperature for the day
-    private static int countTemp;
-
-    // Previous day
-    private static String prevDate = "";
-    private static long prevDateMilliseconds = 0;
 
     private static final String FIVE_WEATHER_RESPONSE_URL =
             "http://api.openweathermap.org/data/2.5/forecast?q=Novokuznetsk,ru&lang=ru&units=metric&appid=31b762ad9bd0b94b1c2a3cecee08e837";
@@ -176,99 +165,6 @@ public final class QueryUtils {
 
         return stringBuilder.toString();
     }
-
-
-    public static ArrayList<Weather> getFiveDays(ArrayList<Weather> weatherArrayList ) {
-
-        ArrayList<Weather> fiveWeather = new ArrayList<>();
-
-        Weather weather;
-
-        String date = "";
-        String icon;
-        int temp;
-
-        int prevIndex = 0;
-
-        for (int i = 0; i < weatherArrayList.size(); i++) {
-
-            weather = weatherArrayList.get(i);
-
-            date = getDateString(weather.getDate());
-            icon = weather.getIcon();
-            temp = weather.getTemp();
-
-            if (prevDate.isEmpty()) {
-                prevDate = date;
-                prevDateMilliseconds = weather.getDate();
-                averageTemp += temp;
-                countTemp++;
-                prevDateMilliseconds = weather.getDate();
-            } else if (!date.equals(prevDate)) {
-
-                int t = (int) Math.round(averageTemp/(countTemp*1.0));
-
-                int maxDifferent = 100;
-
-                for (int j = prevIndex; j < i; j++) {
-                    Weather searchIcon = weatherArrayList.get(j);
-
-                    if (Math.abs(searchIcon.getTemp() - t) < maxDifferent) {
-                        maxDifferent = Math.abs(searchIcon.getTemp() - t);
-                        icon = searchIcon.getIcon();
-                    }
-
-                    System.out.println("[" + i + "," + j + "] = " + "icon:" + searchIcon.getIcon() + ", temp: " + searchIcon.getTemp());
-                }
-
-                Weather averageWeather = new Weather(
-                        prevDateMilliseconds,
-                        t,
-                        0,
-                        0,
-                        0,
-                        0,
-                        "",
-                        icon);
-
-                fiveWeather.add(averageWeather);
-                averageTemp = weather.getTemp();
-                countTemp = 1;
-                prevDate = date;
-                prevIndex = i;
-            } else {
-                averageTemp += temp;
-                countTemp++;
-                prevDateMilliseconds = weather.getDate();
-            }
-
-
-
-        }
-
-        return fiveWeather;
-
-    }
-
-    private static String getDateString(long timeInMilliseconds) {
-
-        Calendar today = Calendar.getInstance();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timeInMilliseconds * 1000L);
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-
-        if (simpleDateFormat.format(calendar.getTime()).equals(simpleDateFormat.format(today.getTime())))
-            return "Сегодня";
-        else
-            today.add(Calendar.DATE, +1);
-
-        if (simpleDateFormat.format(calendar.getTime()).equals(simpleDateFormat.format(today.getTime())))
-            return "Завтра";
-
-        return simpleDateFormat.format(calendar.getTime());
-    }
-
 
 
 }

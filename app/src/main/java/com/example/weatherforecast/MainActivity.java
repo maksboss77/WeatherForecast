@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
     //
     public static WeatherDao weatherDao;
 
-    public static boolean connect_status = false;
 
     /**
      * Текущая погода
@@ -112,49 +111,8 @@ public class MainActivity extends AppCompatActivity {
                 .then(addDatabaseWork)
                 .enqueue();
 
-        // Когда работа завершена, отрисовать текущую погоду
-        WorkManager.getInstance(this).getWorkInfoByIdLiveData(nowUploadWorkRequest.getId())
-                .observe(this, new Observer<WorkInfo>() {
-                    @Override
-                    public void onChanged(WorkInfo workInfo) {
-                        if (workInfo.getState().isFinished()) {
-                            getView();
-                        }
-                    }
-                });
 
-        // Отслеживание, когда работа завершена - отрисовать элементы списка
-        WorkManager.getInstance(this).getWorkInfoByIdLiveData(uploadWorkRequest.getId())
-                .observe(this, new Observer<WorkInfo>() {
-                    @Override
-                    public void onChanged(WorkInfo workInfo) {
-                        // Статус Worker'a
-                        System.out.println("Status Worker: " + workInfo.getState().name());
-                        if (workInfo.getState().isFinished()) {
-                            weatherListView.setAdapter(adapter);
-
-//                            weatherDao = ((AppDelegate) getApplicationContext())
-//                                    .getWeatherDatabase().getWeatherDao();
-//                            weatherDao.insert(weathers);
-
-                        }
-                    }
-                });
-
-        WorkManager.getInstance(this).getWorkInfoByIdLiveData(addDatabaseWork.getId())
-                .observe(this, new Observer<WorkInfo>() {
-                    @Override
-                    public void onChanged(WorkInfo workInfo) {
-                        if (workInfo.getState().isFinished()) {
-                            progressBar.setVisibility(ProgressBar.INVISIBLE);
-                            linearLayout.setVisibility(linearLayout.VISIBLE);
-
-                            // Меняем статус подключения к сети на истину
-                            connect_status = true;
-                        }
-                    }
-                });
-
+        // Отрисовка списка из кэша (cashDatabaseWork)
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(cashDatabaseWork.getId())
                 .observe(this, new Observer<WorkInfo>() {
                     @Override
@@ -167,6 +125,54 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+
+        // Отрисовка текущей погоды после выполнения (nowUploadWorkRequest)
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(nowUploadWorkRequest.getId())
+                .observe(this, new Observer<WorkInfo>() {
+                    @Override
+                    public void onChanged(WorkInfo workInfo) {
+
+                        if (workInfo.getState().isFinished()) {
+                            getView();
+                        } else if (workInfo.getState() == WorkInfo.State.ENQUEUED){
+                            // если задача не выполнена и стоит в очереди, значит соединение
+                            // с сетью отсуствует и нужно вывести соотвествующее сообщение
+                            Toast toast = Toast.makeText(
+                                    getApplicationContext(),
+                                    getApplicationContext().getResources().getString(R.string.network_error),
+                                    Toast.LENGTH_LONG);
+                            toast.setGravity(Gravity.CENTER, 0, 0);
+                            toast.show();
+                        }
+                    }
+                });
+
+        // Отрисовка элементов списка после выполнения запроса (uploadWorkRequest)
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(uploadWorkRequest.getId())
+                .observe(this, new Observer<WorkInfo>() {
+                    @Override
+                    public void onChanged(WorkInfo workInfo) {
+                        // Статус Worker'a
+                        System.out.println("Status Worker: " + workInfo.getState().name());
+                        if (workInfo.getState().isFinished()) {
+                            weatherListView.setAdapter(adapter);
+
+                        }
+                    }
+                });
+
+        // Действие после вставки строк (addDatabaseWork)
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(addDatabaseWork.getId())
+                .observe(this, new Observer<WorkInfo>() {
+                    @Override
+                    public void onChanged(WorkInfo workInfo) {
+                        if (workInfo.getState().isFinished()) {
+
+                        }
+                    }
+                });
+
+
 
         // Отслеживание нажатий по элементам
         weatherListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

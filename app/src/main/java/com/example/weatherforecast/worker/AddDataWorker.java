@@ -23,9 +23,6 @@ public class AddDataWorker extends Worker {
     @Override
     public Result doWork() {
 
-
-
-
         //сначала нужно отчистить бд от старых записей.
         MainActivity.weatherDao.deleteOldRow(getStartDay());
         MainActivity.weatherDao.insert(MainActivity.weathers);
