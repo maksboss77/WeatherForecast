@@ -1,5 +1,6 @@
 package com.example.weatherforecast.data;
 
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;

@@ -7,6 +7,7 @@ import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
+import androidx.work.Worker;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import com.example.weatherforecast.worker.UploadWorker;
 import com.example.weatherforecast.worker.CashDatabaseWorker;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     //
     public static WeatherDao weatherDao;
 
-    private boolean connect_status = false;
+    public static boolean connect_status = false;
 
     /**
      * Текущая погода
@@ -88,10 +90,9 @@ public class MainActivity extends AppCompatActivity {
                 .setConstraints(constraints)
                 .build();
 
-        // Заполнение БД данными о погоде
+        // Берем и заполняем данные из кэша
         OneTimeWorkRequest cashDatabaseWork = new OneTimeWorkRequest
                 .Builder(CashDatabaseWorker.class)
-                .setConstraints(constraints)
                 .build();
 
         //Запускаем Worker в фоновом потоке, сначала получаем информацию на "Сейчас",
@@ -105,10 +106,10 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setVisibility(ProgressBar.VISIBLE);
 
         WorkManager.getInstance(this)
-                .beginWith(nowUploadWorkRequest)
+                .beginWith(cashDatabaseWork)
+                .then(nowUploadWorkRequest)
                 .then(uploadWorkRequest)
                 .then(addDatabaseWork)
-                .then(cashDatabaseWork)
                 .enqueue();
 
         // Когда работа завершена, отрисовать текущую погоду
@@ -150,6 +151,19 @@ public class MainActivity extends AppCompatActivity {
 
                             // Меняем статус подключения к сети на истину
                             connect_status = true;
+                        }
+                    }
+                });
+
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(cashDatabaseWork.getId())
+                .observe(this, new Observer<WorkInfo>() {
+                    @Override
+                    public void onChanged(WorkInfo workInfo) {
+                        if (workInfo.getState().isFinished()) {
+                            progressBar.setVisibility(ProgressBar.INVISIBLE);
+                            linearLayout.setVisibility(linearLayout.VISIBLE);
+
+                            weatherListView.setAdapter(adapter);
                         }
                     }
                 });
