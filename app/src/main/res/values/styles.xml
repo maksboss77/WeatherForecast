@@ -29,6 +29,10 @@
         <item name="android:windowContentTransitions" tools:targetApi="lollipop">true</item>
         <item name="android:windowAllowEnterTransitionOverlap" tools:targetApi="lollipop">false</item>
         <item name="android:windowAllowReturnTransitionOverlap" tools:targetApi="lollipop">false</item>
+
+<!--        Установка фона другого цвета (убрать вспышку)-->
+        <item name="android:windowBackground">@color/colorPrimaryDark</item>
+
     </style>
 
 

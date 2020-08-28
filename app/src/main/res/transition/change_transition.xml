@@ -2,11 +2,14 @@
 <transitionSet xmlns:android="http://schemas.android.com/apk/res/android"
     android:transitionOrdering="together">
 
-    <changeBounds
-        android:duration="1000"/>
+    <autoTransition
+        android:duration="1000" />
 
-    <fade
-        android:duration="500"
-        android:fadingMode="fade_in_out"/>
+<!--    <changeBounds-->
+<!--        android:duration="1000"/>-->
+
+<!--    <fade-->
+<!--        android:duration="500"-->
+<!--        android:fadingMode="fade_in_out"/>-->
 
 </transitionSet>

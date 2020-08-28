@@ -23,15 +23,11 @@ public class AddDataWorker extends Worker {
     @Override
     public Result doWork() {
 
-        //сначала нужно отчистить бд от старых записей.
-        MainActivity.weatherDao.deleteOldRow(getStartDay());
+
         MainActivity.weatherDao.insert(MainActivity.weathers);
         System.out.println((ArrayList<Weather>) MainActivity.weatherDao.getAll());
         return Result.success();
     }
 
-    private long getStartDay() {
 
-        return Calendar.getInstance().getTimeInMillis()/1000;
-    }
 }

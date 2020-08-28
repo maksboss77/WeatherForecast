@@ -31,6 +31,9 @@ public class ReadDetailsWorker extends Worker {
     public Result doWork() {
 
         getDate(DetailActivity.index);
+        //сначала нужно отчистить бд от старых записей.
+        MainActivity.weatherDao.deleteOldRow(getStartDay());
+
         DetailActivity.detailsWeathers = (ArrayList<Weather>) MainActivity.weatherDao.testQuery(startDay, endDay);
         System.out.println("TEST: " + DetailActivity.detailsWeathers);
         DetailActivity.adapter = new DetailsAdapter(getApplicationContext(), 0, DetailActivity.detailsWeathers);
@@ -54,5 +57,10 @@ public class ReadDetailsWorker extends Worker {
         calendar.add(Calendar.HOUR_OF_DAY, -3);
         System.out.println("END DAY: " + (calendar.getTimeInMillis()/1000));
         endDay = calendar.getTimeInMillis()/1000;
+    }
+
+    private long getStartDay() {
+
+        return Calendar.getInstance().getTimeInMillis()/1000;
     }
 }
