@@ -1,5 +1,7 @@
 package com.example.weatherforecast;
 
+import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +26,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -55,9 +58,11 @@ public class DetailActivity extends AppCompatActivity {
         /** Установка кнопки "Назад", если делать через манифест, то страница перезагружается*/
         ImageButton button = (ImageButton) findViewById(R.id.button_prev);
         button.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                finish();
+                onBackPressed();
+//                finishAfterTransition();
             }
         });
 

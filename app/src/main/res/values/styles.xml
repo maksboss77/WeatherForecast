@@ -1,28 +1,42 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="AppThemeMain" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorMain</item>
-        <item name="colorPrimaryDark">@color/colorMain</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-
-    </style>
-
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorMain</item>
-        <item name="colorPrimaryDark">@color/colorMain</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
 
+        <!--        add-->
+
+        <!-- enable window content transitions -->
+        <item name="android:windowActivityTransitions" tools:targetApi="lollipop">true</item>
+
+        <!-- specify enter and exit transitions -->
+        <item name="android:windowEnterTransition" tools:targetApi="lollipop">
+            @transition/change_transition</item>
+        <item name="android:windowExitTransition" tools:targetApi="lollipop">
+            @transition/change_transition</item>
+
+        <!-- specify shared element transitions -->
+        <item name="android:windowSharedElementEnterTransition" tools:targetApi="lollipop">
+            @transition/change_transition</item>
+        <item name="android:windowSharedElementExitTransition" tools:targetApi="lollipop">
+            @transition/change_transition</item>
+
+<!--        test-->
+        <item name="android:windowContentTransitions" tools:targetApi="lollipop">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap" tools:targetApi="lollipop">false</item>
+        <item name="android:windowAllowReturnTransitionOverlap" tools:targetApi="lollipop">false</item>
     </style>
 
 
     <style name="DetailsTextStyleMain">
+        <item name="android:textColor">@color/colorWhite</item>
         <item name="android:textSize">24sp</item>
+        <item name="android:fontFamily" tools:targetApi="jelly_bean">sans-serif-condensed</item>
+        <item name="android:fontWeight" tools:targetApi="o">500</item>
     </style>
 
     <style name="DetailsTextStyleDescription">
@@ -31,12 +45,18 @@
         <item name="android:layout_marginRight">16dp</item>
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:fontFamily" tools:targetApi="jelly_bean">sans-serif-condensed</item>
+        <item name="android:fontWeight" tools:targetApi="o">500</item>
     </style>
 
     <style name="DetailsTextStyleAdditional">
         <item name="android:layout_gravity">center</item>
         <item name="android:layout_margin">8dp</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="android:fontFamily" tools:targetApi="jelly_bean">sans-serif-condensed</item>
+        <item name="android:fontWeight" tools:targetApi="o">500</item>
     </style>
 
     <style name="MainTitleStyle">
@@ -53,7 +73,7 @@
     </style>
 
     <style name="MainListStyle">
-        <item name="android:textColor">@color/colorMain</item>
+        <item name="android:textColor">@color/colorWhite</item>
         <item name="android:textSize">18sp</item>
         <item name="android:fontFamily" tools:targetApi="jelly_bean">sans-serif-condensed</item>
         <item name="android:fontWeight" tools:targetApi="o">500</item>

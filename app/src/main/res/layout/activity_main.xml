@@ -4,60 +4,91 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorMain"
+    android:background="@color/colorDetails"
     tools:context=".MainActivity">
-
 
     <ScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorMain"
+        android:layout_height="300dp"
         android:visibility="visible"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="0dp">
-
+        tools:layout_editor_absoluteX="0dp"
+        android:background="@drawable/ic_landscape_blue"
+        android:scaleType="centerCrop">
 
         <LinearLayout
             android:id="@+id/linear_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingTop="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
+
 
             <TextView
                 android:id="@+id/text_view_city"
                 style="@style/MainTitleStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/city" />
+                android:text="@string/city"
+                android:textColor="@color/colorText"/>
 
-            <ImageView
-                android:id="@+id/image_view_icon"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginTop="16dp"
-                android:contentDescription="@string/example" />
-
-            <TextView
-                android:id="@+id/text_view_temp"
-                style="@style/MainTitleStyle"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/degree" />
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/text_view_description"
-                style="@style/MainDescriptionStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <ImageView
+                        android:id="@+id/image_view_icon"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_marginTop="16dp"
+                        android:contentDescription="@string/example" />
+
+                    <TextView
+                        android:id="@+id/text_view_temp"
+                        style="@style/MainTitleStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/degree"
+                        android:textColor="@color/colorText"/>
+
+                    <TextView
+                        android:id="@+id/text_view_description"
+                        style="@style/MainDescriptionStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text=""
+                        android:textColor="@color/colorText"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 
     </ScrollView>
+
+<!--    <View-->
+<!--        android:id="@+id/view"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="3dp"-->
+<!--        android:layout_marginLeft="8dp"-->
+<!--        android:layout_marginRight="8dp"-->
+<!--        android:background="@color/colorWhite"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/scroll_view"-->
+<!--        />-->
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -73,7 +104,9 @@
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/colorWhite"
+            android:background="@color/colorDetails"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="1dp"
             android:orientation="vertical"
             android:transitionName="@string/anim">
 

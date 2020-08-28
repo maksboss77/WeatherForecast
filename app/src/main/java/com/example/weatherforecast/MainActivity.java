@@ -15,6 +15,9 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.transition.AutoTransition;
+import android.transition.ChangeBounds;
+import android.transition.TransitionSet;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
@@ -181,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Отслеживание нажатий по элементам
         weatherListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -190,9 +193,8 @@ public class MainActivity extends AppCompatActivity {
                 Bundle bundle = null;
 
                 if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                    View v = activity.findViewById(R.id.date);
-                    if (v != null) {
-                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(activity, v, activity.getString(R.string.anim));
+                    if (view != null) {
+                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(activity, view, activity.getString(R.string.anim));
                         bundle = options.toBundle();
                     }
                 }
