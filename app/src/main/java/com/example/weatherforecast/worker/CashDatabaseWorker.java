@@ -27,7 +27,6 @@ public class CashDatabaseWorker extends Worker {
     public Result doWork() {
 
         // Получаем данные из бд в переменную weatherDao, на данном этапе
-        // приложение НЕ чистит данные из бд, он их чистит, только когда получает новые
         MainActivity.weatherDao = ((AppDelegate) getApplicationContext())
                 .getWeatherDatabase().getWeatherDao();
         // читаем данные из бд

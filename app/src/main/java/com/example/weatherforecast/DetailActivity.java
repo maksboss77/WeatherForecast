@@ -15,7 +15,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.weatherforecast.data.Weather;
 import com.example.weatherforecast.data.WeatherDao;
+import com.example.weatherforecast.worker.ChartWorker;
 import com.example.weatherforecast.worker.ReadDetailsWorker;
+import com.github.mikephil.charting.charts.Chart;
+import com.github.mikephil.charting.charts.LineChart;
 
 import org.w3c.dom.Text;
 
@@ -45,6 +48,8 @@ public class DetailActivity extends AppCompatActivity {
 
     public static WeatherDao detailsDao;
 
+    public static LineChart chart;
+
     public static int index;
 
 
@@ -70,12 +75,18 @@ public class DetailActivity extends AppCompatActivity {
         TextView title = (TextView) findViewById(R.id.text_title);
         title.setText(getDate());
 
+        /**Chart*/
+        chart = (LineChart) findViewById(R.id.chart);
+
         detailListView = (ListView) findViewById(R.id.list);
 
         // Отправить запрос в фоновом потоке на прочтение данных с базы
         OneTimeWorkRequest readDatabase = new OneTimeWorkRequest.Builder(ReadDetailsWorker.class).build();
+        OneTimeWorkRequest viewChart = new OneTimeWorkRequest.Builder(ChartWorker.class).build();
         WorkManager.getInstance(this)
-                .enqueue(readDatabase);
+                .beginWith(readDatabase)
+                .then(viewChart)
+                .enqueue();
 
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(readDatabase.getId())
                 .observe(this, new Observer<WorkInfo>() {
@@ -88,6 +99,16 @@ public class DetailActivity extends AppCompatActivity {
                             for (int i = 0; i < detailsWeathers.size(); i++) {
                                 System.out.println("INDEX[" + i + "]: " + detailsWeathers.get(i).toString() + "\n\n");
                             }
+                        }
+                    }
+                });
+
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(viewChart.getId())
+                .observe(this, new Observer<WorkInfo>() {
+                    @Override
+                    public void onChanged(WorkInfo workInfo) {
+                        if (workInfo.getState().isFinished()) {
+                            chart.invalidate();
                         }
                     }
                 });
