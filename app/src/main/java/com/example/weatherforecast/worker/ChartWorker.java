@@ -31,6 +31,7 @@ public class ChartWorker extends Worker {
         super(context, workerParams);
     }
 
+    // Заполнение информации для графика + его стилизация
     @NonNull
     @Override
     public Result doWork() {
@@ -115,15 +116,10 @@ public class ChartWorker extends Worker {
         axisX.setTextSize(12f);
 
 
-        //Количество отображаемых значений по оси Х
-//        axisX.setLabelCount(DetailActivity.detailsWeathers.size());
-
-
         return Result.success();
     }
 
     private int getTime(long date) {
-        /**TODO: сделать нормальный вывод*/
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(date*1000);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH");

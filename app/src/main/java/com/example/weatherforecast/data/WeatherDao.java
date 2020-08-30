@@ -30,7 +30,7 @@ public interface WeatherDao {
 
     /** Вывести информацию по конкретному дню */
     @Query("SELECT * FROM weather WHERE dt BETWEEN :startDate AND :endDate")
-    List<Weather> testQuery(long startDate, long endDate);
+    List<Weather> oneDayQuery(long startDate, long endDate);
 
     /** Вставка информации в таблицу */
     @Insert(onConflict = OnConflictStrategy.REPLACE) // Если есть конфликт по ID, то просто заменит на новое значение

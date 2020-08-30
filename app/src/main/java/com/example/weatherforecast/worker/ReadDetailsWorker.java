@@ -26,16 +26,15 @@ public class ReadDetailsWorker extends Worker {
         super(context, workerParams);
     }
 
+    // Информация по конкретному дню
     @NonNull
     @Override
     public Result doWork() {
 
         getDate(DetailActivity.index);
-        //сначала нужно отчистить бд от старых записей.
-        MainActivity.weatherDao.deleteOldRow(getStartDay());
 
-        DetailActivity.detailsWeathers = (ArrayList<Weather>) MainActivity.weatherDao.testQuery(startDay, endDay);
-        System.out.println("TEST: " + DetailActivity.detailsWeathers);
+
+        DetailActivity.detailsWeathers = (ArrayList<Weather>) MainActivity.weatherDao.oneDayQuery(startDay, endDay);
         DetailActivity.adapter = new DetailsAdapter(getApplicationContext(), 0, DetailActivity.detailsWeathers);
 
         return Result.success();
@@ -59,8 +58,5 @@ public class ReadDetailsWorker extends Worker {
         endDay = calendar.getTimeInMillis()/1000;
     }
 
-    private long getStartDay() {
 
-        return Calendar.getInstance().getTimeInMillis()/1000;
-    }
 }

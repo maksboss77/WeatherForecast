@@ -1,5 +1,6 @@
 package com.example.weatherforecast.worker;
 
+import android.app.Activity;
 import android.content.Context;
 
 import com.example.weatherforecast.AppDelegate;
@@ -22,6 +23,7 @@ public class CashDatabaseWorker extends Worker {
         super(context, workerParams);
     }
 
+    // Читаем бд (получаем кеш погоды)
     @NonNull
     @Override
     public Result doWork() {
@@ -29,6 +31,12 @@ public class CashDatabaseWorker extends Worker {
         // Получаем данные из бд в переменную weatherDao, на данном этапе
         MainActivity.weatherDao = ((AppDelegate) getApplicationContext())
                 .getWeatherDatabase().getWeatherDao();
+
+
+        //сначала нужно отчистить бд от старых записей.
+        MainActivity.weatherDao.deleteOldRow(getStartDay());
+
+
         // читаем данные из бд
         MainActivity.weathers = (ArrayList<Weather>) MainActivity.weatherDao.getAll();
         MainActivity.weathersFiveDay = getFiveDays(MainActivity.weathers);
@@ -136,5 +144,10 @@ public class CashDatabaseWorker extends Worker {
             return "Завтра";
 
         return simpleDateFormat.format(calendar.getTime());
+    }
+
+    private long getStartDay() {
+
+        return Calendar.getInstance().getTimeInMillis()/1000;
     }
 }

@@ -27,6 +27,7 @@ public class WeatherAdapter extends ArrayAdapter<Weather> {
         super(context, resource, weathers);
     }
 
+    // Отрисовка элементов списка
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -59,13 +60,14 @@ public class WeatherAdapter extends ArrayAdapter<Weather> {
         return listItemView;
     }
 
+    // Преобразование даты в нужный формат (Сегодня завтра
     private String getDateString(long timeInMilliseconds) {
 
         Calendar today = Calendar.getInstance();
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(timeInMilliseconds * 1000L);
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMMM");
 
         if (simpleDateFormat.format(calendar.getTime()).equals(simpleDateFormat.format(today.getTime())))
             return "Сегодня";

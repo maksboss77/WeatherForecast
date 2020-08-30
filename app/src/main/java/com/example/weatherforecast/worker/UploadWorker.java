@@ -21,6 +21,7 @@ public class UploadWorker extends Worker {
         super(context, workerParams);
     }
 
+    // Получение текущей погоды и на 5 дней
     @NonNull
     @Override
     public Result doWork() {

@@ -27,6 +27,7 @@ public class DetailsAdapter extends ArrayAdapter<Weather> {
         super(context, resource, objects);
     }
 
+    /** Отрисовка списка (экран Детали)*/
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

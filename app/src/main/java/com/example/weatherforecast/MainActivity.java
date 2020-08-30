@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.transition.AutoTransition;
 import android.transition.ChangeBounds;
 import android.transition.TransitionSet;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
@@ -76,42 +77,49 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Поиск в макете ListView
         weatherListView = (ListView) findViewById(R.id.list);
 
         // Критерий: подключен Wi-Fi или мобильная передача данных
         Constraints constraints = new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build();
-
-        // Погода за 5 дней
-        OneTimeWorkRequest uploadWorkRequest = new OneTimeWorkRequest
-                .Builder(UploadWorker.class)
-                .setConstraints(constraints)
-                .build();
-        // Погода на текущий момент
-        OneTimeWorkRequest nowUploadWorkRequest = new OneTimeWorkRequest
-                .Builder(NowUploadWorker.class)
-                .setConstraints(constraints)
-                .build();
-        // Заполнение БД данными о погоде
-        OneTimeWorkRequest addDatabaseWork = new OneTimeWorkRequest
-                .Builder(AddDataWorker.class)
-                .setConstraints(constraints)
-                .build();
 
         // Берем и заполняем данные из кэша
         OneTimeWorkRequest cashDatabaseWork = new OneTimeWorkRequest
                 .Builder(CashDatabaseWorker.class)
                 .build();
 
-        //Запускаем Worker в фоновом потоке, сначала получаем информацию на "Сейчас",
-        // потом загружается информация на 5 дней
+        // Погода на текущий момент
+        OneTimeWorkRequest nowUploadWorkRequest = new OneTimeWorkRequest
+                .Builder(NowUploadWorker.class)
+                .setConstraints(constraints)
+                .build();
 
+        // Погода за 5 дней
+        OneTimeWorkRequest uploadWorkRequest = new OneTimeWorkRequest
+                .Builder(UploadWorker.class)
+                .setConstraints(constraints)
+                .build();
+
+        // Заполнение БД данными о погоде
+        OneTimeWorkRequest addDatabaseWork = new OneTimeWorkRequest
+                .Builder(AddDataWorker.class)
+                .setConstraints(constraints)
+                .build();
+
+        // Запускаем Worker в фоновом потоке:
+        // 1. Читаем данные из Бд и отображаем ее
+        // 2. Делаем запрос на получение текущей погоды
+        // 3. Делаем запрос на получение погоды на 5 дней
+        // 4. Обновляем данные в БД.
+        // Примечание: каждый пункт выполяется, если выполнены прерыдущие действия цепочки.
+
+        // Скрываем макет, отображаем Progress Bar
         final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear_layout);
         linearLayout.setVisibility(View.INVISIBLE);
-
-
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(ProgressBar.VISIBLE);
 
+        // Запускаем работу (в фоновом потоке) на выполнение
         WorkManager.getInstance(this)
                 .beginWith(cashDatabaseWork)
                 .then(nowUploadWorkRequest)
@@ -175,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onChanged(WorkInfo workInfo) {
                         if (workInfo.getState().isFinished()) {
-
+                            Log.e("Main Activity", "Данные в БД внесены");
                         }
                     }
                 });
@@ -183,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Отслеживание нажатий по элементам
+        // При нажатии на элемент списка открываем новый экран (детали) с указанной датой.
         weatherListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
             @Override
@@ -207,24 +216,12 @@ public class MainActivity extends AppCompatActivity {
                     activity.startActivity(intent, bundle);
                 }
 
-//                Intent intent = new Intent(activity, DetailActivity.class);
-//                intent.putExtra("index", position);
-//                activity.startActivity(intent);
-
             }
         });
 
 
     }
 
-    private void showToast(ArrayList<Weather> all) {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < all.size(); i++) {
-            builder.append(all.get(i).toString()).append("\n");
-        }
-
-        Toast.makeText(this, builder.toString(), Toast.LENGTH_SHORT).show();
-    }
 
     String urlIconBegin = "http://openweathermap.org/img/wn/";
     String urlIconEnd = "@2x.png";

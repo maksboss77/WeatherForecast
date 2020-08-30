@@ -3,7 +3,7 @@
     android:transitionOrdering="together">
 
     <autoTransition
-        android:duration="1000" />
+        android:duration="700" />
 
 <!--    <changeBounds-->
 <!--        android:duration="1000"/>-->

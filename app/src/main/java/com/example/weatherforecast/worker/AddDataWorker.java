@@ -19,6 +19,8 @@ public class AddDataWorker extends Worker {
         super(context, workerParams);
     }
 
+    // Заполнение бд данными, если id совпадает, то переписываются значения
+    // (например, погода могла на завтрашний день поменяться)
     @NonNull
     @Override
     public Result doWork() {

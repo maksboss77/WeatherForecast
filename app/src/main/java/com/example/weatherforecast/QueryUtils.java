@@ -29,6 +29,7 @@ public final class QueryUtils {
 
     }
 
+    // Преобразование JSON формата. Заносим данные в ArrayList<Weather> (5 дней)
     public static ArrayList<Weather> extractWeathers() {
 
         ArrayList<Weather> weathers = new ArrayList<>();
@@ -82,6 +83,7 @@ public final class QueryUtils {
         return weathers;
     }
 
+    // Преобразование JSON формата. Заносим данные в ArrayList<Weather> (текущая погода)
     public static Weather extractWeatherNow() {
 
         Weather weather;
@@ -112,6 +114,7 @@ public final class QueryUtils {
         return null;
     }
 
+    // Запрос на получение JSON (который преобразуется в строку)
     public static String getStringJSON(String urlString) throws IOException {
 
         String jsonResponse = "";

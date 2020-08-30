@@ -56,8 +56,12 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Получить индекс нажатого элемента
-        index = getIntent().getExtras().getInt("index");
+
+        //Получить индекс нажатого элемента (если нажатие произошло после 22,
+        // то нажатие на 1 элемент - это нажатие на "завтра"
+        index = getIntent().getExtras().getInt("index") + getIndexTime();
+
+
         setContentView(R.layout.activity_detail);
 
         /** Установка кнопки "Назад", если делать через манифест, то страница перезагружается*/
@@ -75,12 +79,12 @@ public class DetailActivity extends AppCompatActivity {
         TextView title = (TextView) findViewById(R.id.text_title);
         title.setText(getDate());
 
-        /**Chart*/
+        // График
         chart = (LineChart) findViewById(R.id.chart);
 
         detailListView = (ListView) findViewById(R.id.list);
 
-        // Отправить запрос в фоновом потоке на прочтение данных с базы
+        // Отправить запрос в фоновом потоке на прочтение данных с базы, а после отрисовать график
         OneTimeWorkRequest readDatabase = new OneTimeWorkRequest.Builder(ReadDetailsWorker.class).build();
         OneTimeWorkRequest viewChart = new OneTimeWorkRequest.Builder(ChartWorker.class).build();
         WorkManager.getInstance(this)
@@ -88,21 +92,18 @@ public class DetailActivity extends AppCompatActivity {
                 .then(viewChart)
                 .enqueue();
 
+        // Отрисовать список, если прочитали данные с бд
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(readDatabase.getId())
                 .observe(this, new Observer<WorkInfo>() {
                     @Override
                     public void onChanged(WorkInfo workInfo) {
                         if (workInfo.getState().isFinished()) {
-
                             detailListView.setAdapter(adapter);
-
-                            for (int i = 0; i < detailsWeathers.size(); i++) {
-                                System.out.println("INDEX[" + i + "]: " + detailsWeathers.get(i).toString() + "\n\n");
-                            }
                         }
                     }
                 });
 
+        // Перезагрузить график
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(viewChart.getId())
                 .observe(this, new Observer<WorkInfo>() {
                     @Override
@@ -115,6 +116,21 @@ public class DetailActivity extends AppCompatActivity {
 
     }
 
+    // Получить время (для отображения информации и заголовка)
+    // Если время больше 22 чаов, то отображать список на сегодняшний день не нужно, так как данных нет
+    private int getIndexTime() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH");
+        String t = simpleDateFormat.format(calendar.getTime());
+        int result = Integer.parseInt(t);
+
+        if (result >= 22)
+            return  1;
+        else
+            return 0;
+
+    }
+
     private String getDate() {
 
         if (index == 0)
@@ -124,7 +140,7 @@ public class DetailActivity extends AppCompatActivity {
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, index);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMMM");
 
         return simpleDateFormat.format(calendar.getTime());
     }
