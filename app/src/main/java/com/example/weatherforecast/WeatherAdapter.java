@@ -20,8 +20,16 @@ import androidx.annotation.Nullable;
 
 public class WeatherAdapter extends ArrayAdapter<Weather> {
 
-     private String urlIconBegin = "http://openweathermap.org/img/wn/";
-     private String urlIconEnd = "@2x.png";
+
+    private static final long DATE_TRANSITION = 1000L;
+    private static final String DATE_FORMAT = "dd MMMM";
+
+    private static final String TODAY = "Сегодня";
+    private static final String TOMORROW = "Завтра";
+
+
+    private static final String URL_ICON_BEGIN = "http://openweathermap.org/img/wn/";
+    private static final String URL_ICON_END = "@2x.png";
 
     public WeatherAdapter(@NonNull Context context, int resource, List<Weather> weathers) {
         super(context, resource, weathers);
@@ -48,7 +56,7 @@ public class WeatherAdapter extends ArrayAdapter<Weather> {
         ImageView iconImage = listItemView.findViewById(R.id.icon_image);
         Glide
                 .with(getContext())
-                .load(urlIconBegin + currentWeather.getIcon() + urlIconEnd)
+                .load(URL_ICON_BEGIN + currentWeather.getIcon() + URL_ICON_END)
                 .into(iconImage);
 
 
@@ -65,17 +73,17 @@ public class WeatherAdapter extends ArrayAdapter<Weather> {
 
         Calendar today = Calendar.getInstance();
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timeInMilliseconds * 1000L);
+        calendar.setTimeInMillis(timeInMilliseconds * DATE_TRANSITION);
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMMM");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
 
         if (simpleDateFormat.format(calendar.getTime()).equals(simpleDateFormat.format(today.getTime())))
-            return "Сегодня";
+            return TODAY;
         else
             today.add(Calendar.DATE, +1);
 
         if (simpleDateFormat.format(calendar.getTime()).equals(simpleDateFormat.format(today.getTime())))
-            return "Завтра";
+            return TOMORROW;
 
         return simpleDateFormat.format(calendar.getTime());
     }

@@ -8,6 +8,8 @@ import androidx.room.Room;
 
 public class AppDelegate extends Application {
 
+    private static final String NAME_DATABASE = "weather_database";
+
     private WeatherDatabase mWeatherDatabase;
 
     @Override
@@ -17,7 +19,7 @@ public class AppDelegate extends Application {
         mWeatherDatabase = Room.databaseBuilder(
                 getApplicationContext(),
                 WeatherDatabase.class,
-                "weather_database")
+                NAME_DATABASE)
                 .build();
     }
 

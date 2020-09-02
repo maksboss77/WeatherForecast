@@ -20,8 +20,15 @@ import androidx.annotation.Nullable;
 
 public class DetailsAdapter extends ArrayAdapter<Weather> {
 
-    private String urlIconBegin = "http://openweathermap.org/img/wn/";
-    private String urlIconEnd = "@2x.png";
+    private static final String URL_ICON_BEGIN = "http://openweathermap.org/img/wn/";
+    private static final String URL_ICON_END = "@2x.png";
+
+    private static final long DATE_TRANSITION = 1000L;
+    private static final String DATE_FORMAT = "HH:mm";
+
+    private static final String TODAY = "Сегодня";
+    private static final String TOMORROW = "Завтра";
+
 
     public DetailsAdapter(@NonNull Context context, int resource, @NonNull List<Weather> objects) {
         super(context, resource, objects);
@@ -65,7 +72,7 @@ public class DetailsAdapter extends ArrayAdapter<Weather> {
         ImageView iconImageView = listItemView.findViewById(R.id.details_icon);
         Glide
                 .with(getContext())
-                .load(urlIconBegin + currentWeather.getIcon() + urlIconEnd)
+                .load(URL_ICON_BEGIN + currentWeather.getIcon() + URL_ICON_END)
                 .into(iconImageView);
 
 
@@ -77,17 +84,17 @@ public class DetailsAdapter extends ArrayAdapter<Weather> {
 
         Calendar today = Calendar.getInstance();
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timeInMilliseconds * 1000L);
+        calendar.setTimeInMillis(timeInMilliseconds * DATE_TRANSITION);
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
 
         if (simpleDateFormat.format(calendar.getTime()).equals(simpleDateFormat.format(today.getTime())))
-            return "Сегодня";
+            return TODAY;
         else
             today.add(Calendar.DATE, +1);
 
         if (simpleDateFormat.format(calendar.getTime()).equals(simpleDateFormat.format(today.getTime())))
-            return "Завтра";
+            return TOMORROW;
 
         return simpleDateFormat.format(calendar.getTime());
     }

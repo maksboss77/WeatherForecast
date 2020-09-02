@@ -40,18 +40,23 @@ import androidx.work.WorkManager;
 
 public class DetailActivity extends AppCompatActivity {
 
-    public static ListView detailListView;
+    public ListView detailListView;
 
     public static DetailsAdapter adapter;
 
     public static ArrayList<Weather> detailsWeathers;
 
-    public static WeatherDao detailsDao;
-
     public static LineChart chart;
 
     public static int index;
 
+    private static final String KEY = "index";
+
+    private static final String TIME_FORMAT = "HH";
+    private static final String DATE_FORMAT = "dd MMMM";
+
+    private static final String TODAY = "Сегодня";
+    private static final String TOMORROW = "Завтра";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,7 +64,7 @@ public class DetailActivity extends AppCompatActivity {
 
         //Получить индекс нажатого элемента (если нажатие произошло после 22,
         // то нажатие на 1 элемент - это нажатие на "завтра"
-        index = getIntent().getExtras().getInt("index") + getIndexTime();
+        index = getIntent().getExtras().getInt(KEY) + getIndexTime();
 
 
         setContentView(R.layout.activity_detail);
@@ -71,7 +76,6 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 onBackPressed();
-//                finishAfterTransition();
             }
         });
 
@@ -120,7 +124,7 @@ public class DetailActivity extends AppCompatActivity {
     // Если время больше 22 чаов, то отображать список на сегодняшний день не нужно, так как данных нет
     private int getIndexTime() {
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(TIME_FORMAT);
         String t = simpleDateFormat.format(calendar.getTime());
         int result = Integer.parseInt(t);
 
@@ -134,13 +138,13 @@ public class DetailActivity extends AppCompatActivity {
     private String getDate() {
 
         if (index == 0)
-            return "Сегодня";
+            return TODAY;
         if (index == 1)
-            return "Завтра";
+            return TOMORROW;
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, index);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMMM");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
 
         return simpleDateFormat.format(calendar.getTime());
     }

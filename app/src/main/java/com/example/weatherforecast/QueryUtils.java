@@ -18,6 +18,45 @@ import java.util.ArrayList;
 
 public final class QueryUtils {
 
+    private static final String LOG_TAG = MainActivity.class.getName();
+
+    private static final int NOT_USE = 0;
+
+    private static final int WEATHER_OBJECT_INDEX = 0;
+
+    private static final String WEATHER_ARRAY_LIST = "list";
+
+    private static final String WEATHER_OBJECT_DATE = "dt";
+
+    private static final String WEATHER_OBJECT_MAIN = "main";
+
+    private static final String WEATHER_OBJECT_TEMP = "temp";
+
+    private static final String WEATHER_OBJECT_PRESSURE = "pressure";
+
+    private static final String WEATHER_OBJECT_HUMIDITY = "humidity";
+
+    private static final String WEATHER_ARRAY = "weather";
+
+    private static final String WEATHER_OBJECT_DESCRIPTION = "description";
+
+    private static final String WEATHER_OBJECT_ICON = "icon";
+
+    private static final String WEATHER_OBJECT_CLOUDS = "clouds";
+
+    private static final String WEATHER_OBJECT_ALL = "all";
+
+    private static final String WEATHER_OBJECT_WIND = "wind";
+
+    private static final String WEATHER_OBJECT_SPEED = "speed";
+
+    private static final String REQUEST_METHOD_GET = "GET";
+
+    private static final int READ_TIMEOUT = 10000; /* milliseconds */
+
+    private static final int CONNECT_TIMEOUT = 15000; /* milliseconds */
+
+    private static final int RESPONSE_CODE = 200;
 
     private static final String FIVE_WEATHER_RESPONSE_URL =
             "http://api.openweathermap.org/data/2.5/forecast?q=Novokuznetsk,ru&lang=ru&units=metric&appid=31b762ad9bd0b94b1c2a3cecee08e837";
@@ -37,36 +76,36 @@ public final class QueryUtils {
         try {
 
             JSONObject baseJsonResponse = new JSONObject(getStringJSON(FIVE_WEATHER_RESPONSE_URL));
-            JSONArray weatherArrayList = baseJsonResponse.getJSONArray("list");
+            JSONArray weatherArrayList = baseJsonResponse.getJSONArray(WEATHER_ARRAY_LIST);
 
             for (int i = 0; i < weatherArrayList.length(); i++) {
                 JSONObject currentWeatherObject = weatherArrayList.getJSONObject(i);
-                long date = currentWeatherObject.getLong("dt");
+                long date = currentWeatherObject.getLong(WEATHER_OBJECT_DATE);
 
-                JSONObject mainObject = currentWeatherObject.getJSONObject("main");
-                int temp = mainObject.getInt("temp");
+                JSONObject mainObject = currentWeatherObject.getJSONObject(WEATHER_OBJECT_MAIN);
+                int temp = mainObject.getInt(WEATHER_OBJECT_TEMP);
 
-                int pressure = mainObject.getInt("pressure");
+                int pressure = mainObject.getInt(WEATHER_OBJECT_PRESSURE);
 
-                int humidity = mainObject.getInt("humidity");
+                int humidity = mainObject.getInt(WEATHER_OBJECT_HUMIDITY);
 
 
-                JSONArray weatherList = currentWeatherObject.getJSONArray("weather");
+                JSONArray weatherList = currentWeatherObject.getJSONArray(WEATHER_ARRAY);
                 String description = "";
                 String icon = "";
                 for (int j = 0; j < weatherList.length(); j++) {
                     JSONObject currentWeatherListObject = weatherList.getJSONObject(j);
-                    description = currentWeatherListObject.getString("description");
 
-                    icon = currentWeatherListObject.getString("icon");
+                    description = currentWeatherListObject.getString(WEATHER_OBJECT_DESCRIPTION);
+                    icon = currentWeatherListObject.getString(WEATHER_OBJECT_ICON);
 
                 }
 
-                JSONObject cloudsObject = currentWeatherObject.getJSONObject("clouds");
-                int clouds = cloudsObject.getInt("all");
+                JSONObject cloudsObject = currentWeatherObject.getJSONObject(WEATHER_OBJECT_CLOUDS);
+                int clouds = cloudsObject.getInt(WEATHER_OBJECT_ALL);
 
-                JSONObject windObject = currentWeatherObject.getJSONObject("wind");
-                int wind = windObject.getInt("speed");
+                JSONObject windObject = currentWeatherObject.getJSONObject(WEATHER_OBJECT_WIND);
+                int wind = windObject.getInt(WEATHER_OBJECT_SPEED);
 
                 Weather weather = new Weather(date, temp, pressure, clouds, wind, humidity, description, icon);
                 weathers.add(weather);
@@ -74,9 +113,9 @@ public final class QueryUtils {
             }
 
         } catch (JSONException e) {
-            Log.e("QueryUtils", "Problem parsing the weather JSON results", e);
+            Log.e(LOG_TAG, "Problem parsing the weather JSON results", e);
         } catch (Exception e) {
-            Log.e("QueryUtils", "Problem URL connect", e);
+            Log.e(LOG_TAG, "Problem URL connect", e);
         }
 
 
@@ -92,22 +131,22 @@ public final class QueryUtils {
 
             JSONObject baseJsonResponse = new JSONObject(getStringJSON(NOW_WEATHER_RESPONSE_URL));
 
-            JSONArray weatherInfo = baseJsonResponse.getJSONArray("weather");
-            JSONObject weatherObject = weatherInfo.getJSONObject(0);
-            String description = weatherObject.getString("description");
-            String icon = weatherObject.getString("icon");
+            JSONArray weatherInfo = baseJsonResponse.getJSONArray(WEATHER_ARRAY);
+            JSONObject weatherObject = weatherInfo.getJSONObject(WEATHER_OBJECT_INDEX);
+            String description = weatherObject.getString(WEATHER_OBJECT_DESCRIPTION);
+            String icon = weatherObject.getString(WEATHER_OBJECT_ICON);
 
-            JSONObject mainObject = baseJsonResponse.getJSONObject("main");
-            int temp = mainObject.getInt("temp");
+            JSONObject mainObject = baseJsonResponse.getJSONObject(WEATHER_OBJECT_MAIN);
+            int temp = mainObject.getInt(WEATHER_OBJECT_TEMP);
 
-            weather = new Weather(0, temp, 0, 0, 0, 0, description, icon);
+            weather = new Weather(NOT_USE, temp, NOT_USE, NOT_USE, NOT_USE, NOT_USE, description, icon);
 
             return weather;
 
         } catch (JSONException e) {
-            Log.e("QueryUtils", "Problem parsing the weather JSON results", e);
+            Log.e(LOG_TAG, "Problem parsing the weather JSON results", e);
         } catch (Exception e) {
-            Log.e("QueryUtils", "Problem URL connect", e);
+            Log.e(LOG_TAG, "Problem URL connect", e);
         }
 
 
@@ -133,15 +172,15 @@ public final class QueryUtils {
             url = new URL(urlString);
 
             urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.setReadTimeout(10000 /* milliseconds */);
-            urlConnection.setConnectTimeout(15000 /* milliseconds */);
+            urlConnection.setRequestMethod(REQUEST_METHOD_GET);
+            urlConnection.setReadTimeout(READ_TIMEOUT);
+            urlConnection.setConnectTimeout(CONNECT_TIMEOUT);
             urlConnection.connect(); //тут вылетает
 
             stringBuilder = new StringBuilder();
 
 
-            if (urlConnection.getResponseCode() == 200) {
+            if (urlConnection.getResponseCode() == RESPONSE_CODE) {
                 inputStream = urlConnection.getInputStream();
                 BufferedReader reader= new BufferedReader(new InputStreamReader(inputStream));
                 String line;

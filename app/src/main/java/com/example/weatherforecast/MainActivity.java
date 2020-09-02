@@ -43,6 +43,12 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Имя класса
+    private static final String LOG_TAG = MainActivity.class.getName();
+
+    // Имя нажатой позиции
+    private static final String KEY = "index";
+
     // Общая переменная со всей информацией о погоде за 5 дней
     public static ArrayList<Weather> weathers;
 
@@ -50,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     public static ArrayList<Weather> weathersFiveDay;
 
     // Публичная переменная ListView
-    public static ListView weatherListView;
+    public ListView weatherListView;
 
     // Adapter для отрисовки 5 дней
     public static WeatherAdapter adapter;
@@ -157,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                                     getApplicationContext(),
                                     getApplicationContext().getResources().getString(R.string.network_error),
                                     Toast.LENGTH_LONG);
-                            toast.setGravity(Gravity.CENTER, 0, 0);
+                            toast.setGravity(Gravity.CENTER, Gravity.AXIS_X_SHIFT, Gravity.AXIS_Y_SHIFT);
                             toast.show();
                         }
                     }
@@ -168,11 +174,8 @@ public class MainActivity extends AppCompatActivity {
                 .observe(this, new Observer<WorkInfo>() {
                     @Override
                     public void onChanged(WorkInfo workInfo) {
-                        // Статус Worker'a
-                        System.out.println("Status Worker: " + workInfo.getState().name());
                         if (workInfo.getState().isFinished()) {
                             weatherListView.setAdapter(adapter);
-
                         }
                     }
                 });
@@ -183,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onChanged(WorkInfo workInfo) {
                         if (workInfo.getState().isFinished()) {
-                            Log.e("Main Activity", "Данные в БД внесены");
+                            Log.e(LOG_TAG, "Данные в БД внесены");
                         }
                     }
                 });
@@ -209,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 Intent intent = new Intent(activity, DetailActivity.class);
-                                intent.putExtra("index", position);
+                                intent.putExtra(KEY, position);
                 if (bundle == null) {
                     activity.startActivity(intent);
                 } else {
@@ -246,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
                     getApplicationContext(),
                     getApplicationContext().getResources().getString(R.string.network_error),
                     Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.setGravity(Gravity.CENTER, Gravity.AXIS_X_SHIFT, Gravity.AXIS_Y_SHIFT);
             toast.show();
         }
     }
