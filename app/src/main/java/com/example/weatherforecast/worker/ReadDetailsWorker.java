@@ -19,6 +19,11 @@ import androidx.work.WorkerParameters;
 
 public class ReadDetailsWorker extends Worker {
 
+    private static final long DATE_TRANSITION = 1000L;
+
+    private static final int SET_TIME = 0;
+    private static final int ADD_HOUR_OF_DAY = 1;
+
     long startDay;
     long endDay;
 
@@ -43,19 +48,18 @@ public class ReadDetailsWorker extends Worker {
     private void getDate(int index) {
 
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, SET_TIME);
+        calendar.set(Calendar.MINUTE, SET_TIME);
+        calendar.set(Calendar.SECOND, SET_TIME);
+        calendar.set(Calendar.MILLISECOND, SET_TIME);
 
         calendar.add(Calendar.DAY_OF_MONTH, index);
-        calendar.add(Calendar.HOUR_OF_DAY, +1);
-        System.out.println("START DAY: " + (calendar.getTimeInMillis()/1000));
-        startDay = calendar.getTimeInMillis()/1000;
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        calendar.add(Calendar.HOUR_OF_DAY, ADD_HOUR_OF_DAY);
+        startDay = calendar.getTimeInMillis()/DATE_TRANSITION;
+
+        calendar.add(Calendar.DAY_OF_MONTH, ADD_HOUR_OF_DAY);
         calendar.add(Calendar.HOUR_OF_DAY, -3);
-        System.out.println("END DAY: " + (calendar.getTimeInMillis()/1000));
-        endDay = calendar.getTimeInMillis()/1000;
+        endDay = calendar.getTimeInMillis()/DATE_TRANSITION;
     }
 
 

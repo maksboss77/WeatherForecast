@@ -19,6 +19,15 @@ import androidx.work.WorkerParameters;
 
 public class CashDatabaseWorker extends Worker {
 
+    private static final int NOT_USE = 0;
+
+    private static final String DATE_FORMAT = "dd.MM.yyyy";
+
+    private static final long DATE_TRANSITION = 1000L;
+
+    private static final String TODAY = "Сегодня";
+    private static final String TOMORROW = "Завтра";
+
     public CashDatabaseWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
@@ -95,16 +104,15 @@ public class CashDatabaseWorker extends Worker {
                         icon = searchIcon.getIcon();
                     }
 
-                    System.out.println("[" + i + "," + j + "] = " + "icon:" + searchIcon.getIcon() + ", temp: " + searchIcon.getTemp());
                 }
 
                 Weather averageWeather = new Weather(
                         prevDateMilliseconds,
                         t,
-                        0,
-                        0,
-                        0,
-                        0,
+                        NOT_USE,
+                        NOT_USE,
+                        NOT_USE,
+                        NOT_USE,
                         "",
                         icon);
 
@@ -131,17 +139,17 @@ public class CashDatabaseWorker extends Worker {
 
         Calendar today = Calendar.getInstance();
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timeInMilliseconds * 1000L);
+        calendar.setTimeInMillis(timeInMilliseconds * DATE_TRANSITION);
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
 
         if (simpleDateFormat.format(calendar.getTime()).equals(simpleDateFormat.format(today.getTime())))
-            return "Сегодня";
+            return TODAY;
         else
             today.add(Calendar.DATE, +1);
 
         if (simpleDateFormat.format(calendar.getTime()).equals(simpleDateFormat.format(today.getTime())))
-            return "Завтра";
+            return TOMORROW;
 
         return simpleDateFormat.format(calendar.getTime());
     }

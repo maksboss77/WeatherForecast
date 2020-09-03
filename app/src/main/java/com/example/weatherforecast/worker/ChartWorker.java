@@ -2,6 +2,7 @@ package com.example.weatherforecast.worker;
 
 import android.content.Context;
 import android.content.Entity;
+import android.graphics.Color;
 
 import com.example.weatherforecast.DetailActivity;
 import com.github.mikephil.charting.components.AxisBase;
@@ -27,6 +28,21 @@ import androidx.work.WorkerParameters;
 
 public class ChartWorker extends Worker {
 
+    private static final String DATE_FORMAT = "HH";
+    private static final long DATE_TRANSITION = 1000L;
+
+    private static final String LABEL_TEXT = "Температура";
+    private static final String DESCRIPTION_TEXT = "График суточной температуры";
+    private static final String NO_DATA_TEXT = "Отображать нечего, данных нет :)";
+
+    private static final int COLOR_CHART_R = 93;
+    private static final int COLOR_CHART_G = 157;
+    private static final int COLOR_CHART_B = 191;
+
+    private static final float FORM_SIZE = 16f;
+    private static final float TEXT_SIZE = 12f;
+
+
     public ChartWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
@@ -46,7 +62,7 @@ public class ChartWorker extends Worker {
         }
 
 
-        LineDataSet dataSet = new LineDataSet(entities, "Температура");
+        LineDataSet dataSet = new LineDataSet(entities, LABEL_TEXT);
 
         /** Форматирование температуры*/
         ValueFormatter formatter = new ValueFormatter() {
@@ -62,32 +78,32 @@ public class ChartWorker extends Worker {
         legend.setEnabled(false);
 
         // Цвет графика и линий на графике
-        dataSet.setColor(android.graphics.Color.rgb(93, 157, 191));
+        dataSet.setColor(android.graphics.Color.rgb(COLOR_CHART_R, COLOR_CHART_G, COLOR_CHART_B));
 
         // цвет текста значений (температуры)
-        dataSet.setValueTextColor(android.graphics.Color.rgb(255, 255, 255));
+        dataSet.setValueTextColor(Color.WHITE);
 
-        dataSet.setFormSize(16f);
+        dataSet.setFormSize(FORM_SIZE);
 
         LineData lineData = new LineData(dataSet);
         DetailActivity.chart.setData(lineData);
 
         // Текст описания графика
         Description description = new Description();
-        description.setText("График суточной температуры");
-        description.setTextColor(android.graphics.Color.rgb(255, 255, 255));
+        description.setText(DESCRIPTION_TEXT);
+        description.setTextColor(Color.WHITE);
         DetailActivity.chart.setDescription(description);
 
         // Текст, отображаемый, когда данных нет
-        DetailActivity.chart.setNoDataText("Отображать нечего, данных нет :)");
+        DetailActivity.chart.setNoDataText(NO_DATA_TEXT);
 
         // Рамка графика (true/false)
         DetailActivity.chart.setDrawBorders(false);
 
-        // Отключить сенсорное взаимодействие с графиком
+        // Сенсорное взаимодействие (true/false)
         DetailActivity.chart.setTouchEnabled(false);
 
-        // Масштабирование графика "щипком" и двоейным косанием
+        // Масштабирование графика "щипком" и двойным косанием (true/false)
         DetailActivity.chart.setPinchZoom(false);
         DetailActivity.chart.setDoubleTapToZoomEnabled(false);
 
@@ -108,12 +124,12 @@ public class ChartWorker extends Worker {
         XAxis axisX = DetailActivity.chart.getXAxis();
         axisX.setDrawAxisLine(false);
         axisX.setPosition(XAxis.XAxisPosition.BOTTOM);
-        axisX.setTextColor(android.graphics.Color.rgb(255, 255, 255));
+        axisX.setTextColor(Color.WHITE);
         axisX.setDrawGridLines(false);
         // Установить количество часов на оси х
         axisX.setLabelCount(DetailActivity.detailsWeathers.size());
         // Размер
-        axisX.setTextSize(12f);
+        axisX.setTextSize(TEXT_SIZE);
 
 
         return Result.success();
@@ -121,8 +137,8 @@ public class ChartWorker extends Worker {
 
     private int getTime(long date) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(date*1000);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH");
+        calendar.setTimeInMillis(date*DATE_TRANSITION);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
         String t = simpleDateFormat.format(calendar.getTime());
         int result = Integer.parseInt(t);
         return result;

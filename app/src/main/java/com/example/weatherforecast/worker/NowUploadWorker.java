@@ -16,6 +16,7 @@ public class NowUploadWorker extends Worker {
     }
 
     // Запрос на получение текущей погоды
+
     @NonNull
     @Override
     public Result doWork() {
