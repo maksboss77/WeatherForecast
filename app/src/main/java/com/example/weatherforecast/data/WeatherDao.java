@@ -24,10 +24,6 @@ public interface WeatherDao {
     @Query("SELECT * FROM weather WHERE dt IN (:mDateId)")
     List<Weather> loadAllByDates(int[] mDateId);
 
-//    /** Вывести информацию по конкретному дню */
-//    @Query("SELECT * FROM weather WHERE (dt >= :startDate AND dt < :endDate)")
-//    List<Weather> findByDate(int startDate, int endDate);
-
     /** Вывести информацию по конкретному дню */
     @Query("SELECT * FROM weather WHERE dt BETWEEN :startDate AND :endDate")
     List<Weather> oneDayQuery(long startDate, long endDate);
