@@ -1,66 +1,53 @@
 package com.example.weatherforecast.worker;
 
-import android.app.Activity;
 import android.content.Context;
 
-import com.example.weatherforecast.AppDelegate;
+import com.example.weatherforecast.DateConversion;
 import com.example.weatherforecast.MainActivity;
-import com.example.weatherforecast.QueryUtils;
+import com.example.weatherforecast.DataRequestFromServer;
 import com.example.weatherforecast.WeatherAdapter;
 import com.example.weatherforecast.data.Weather;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-public class CashDatabaseWorker extends Worker {
+public class WeatherFiveDaysWorker extends Worker {
 
     private static final int NOT_USE = 0;
 
     private static final String DATE_FORMAT = "dd.MM.yyyy";
 
-    private static final long DATE_TRANSITION = 1000L;
 
-    private static final String TODAY = "Сегодня";
-    private static final String TOMORROW = "Завтра";
 
-    public CashDatabaseWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    public WeatherFiveDaysWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 
-    // Читаем бд (получаем кеш погоды)
+    // Получение погоды на 5 дней
     @NonNull
     @Override
     public Result doWork() {
 
-        // Получаем данные из бд в переменную weatherDao, на данном этапе
-        MainActivity.weatherDao = ((AppDelegate) getApplicationContext())
-                .getWeatherDatabase().getWeatherDao();
-
-
-        //сначала нужно отчистить бд от старых записей.
-        MainActivity.weatherDao.deleteOldRow(getStartDay());
-
-
-        // читаем данные из бд
-        MainActivity.weathers = (ArrayList<Weather>) MainActivity.weatherDao.getAll();
-        MainActivity.weathersFiveDay = getFiveDays(MainActivity.weathers);
-        MainActivity.adapter = new WeatherAdapter(getApplicationContext(), 0, MainActivity.weathersFiveDay);
+        MainActivity.weathers = DataRequestFromServer.getFiveWeathersFromJSON();
+        MainActivity.summaryWeathers = getFiveDays(MainActivity.weathers);
+        MainActivity.adapter = new WeatherAdapter(getApplicationContext(), 0, MainActivity.summaryWeathers);
 
         return Result.success();
     }
 
-    // Average temperature for the day
+    // Средняя температура за денб
     private int averageTemp;
 
-    // Count temperature for the day
+    // Количество температур в одном дне
     private int countTemp;
 
-    // Previous day
+    // Предыдущая дата
     private String prevDate = "";
     private long prevDateMilliseconds = 0;
 
@@ -80,7 +67,7 @@ public class CashDatabaseWorker extends Worker {
 
             weather = weatherArrayList.get(i);
 
-            date = getDateString(weather.getDate());
+            date = DateConversion.getDateSpecificFormat(weather.getDate(), DATE_FORMAT);
             icon = weather.getIcon();
             temp = weather.getTemp();
 
@@ -126,36 +113,8 @@ public class CashDatabaseWorker extends Worker {
                 countTemp++;
                 prevDateMilliseconds = weather.getDate();
             }
-
-
-
         }
-
         return fiveWeather;
 
-    }
-
-    private String getDateString(long timeInMilliseconds) {
-
-        Calendar today = Calendar.getInstance();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timeInMilliseconds * DATE_TRANSITION);
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
-
-        if (simpleDateFormat.format(calendar.getTime()).equals(simpleDateFormat.format(today.getTime())))
-            return TODAY;
-        else
-            today.add(Calendar.DATE, +1);
-
-        if (simpleDateFormat.format(calendar.getTime()).equals(simpleDateFormat.format(today.getTime())))
-            return TOMORROW;
-
-        return simpleDateFormat.format(calendar.getTime());
-    }
-
-    private long getStartDay() {
-
-        return Calendar.getInstance().getTimeInMillis()/1000;
     }
 }

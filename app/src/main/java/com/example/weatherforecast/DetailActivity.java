@@ -55,8 +55,6 @@ public class DetailActivity extends AppCompatActivity {
     private static final String TIME_FORMAT = "HH";
     private static final String DATE_FORMAT = "dd MMMM";
 
-    private static final String TODAY = "Сегодня";
-    private static final String TOMORROW = "Завтра";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,8 +62,7 @@ public class DetailActivity extends AppCompatActivity {
 
         //Получить индекс нажатого элемента (если нажатие произошло после 22,
         // то нажатие на 1 элемент - это нажатие на "завтра"
-        index = getIntent().getExtras().getInt(KEY) + getIndexTime();
-
+        index = getIntent().getExtras().getInt(KEY) + DateConversion.getIndexAfterTenPM(TIME_FORMAT);
 
         setContentView(R.layout.activity_detail);
 
@@ -81,7 +78,7 @@ public class DetailActivity extends AppCompatActivity {
 
         // Установить заголовок, как дату
         TextView title = (TextView) findViewById(R.id.text_title);
-        title.setText(getDate());
+        title.setText(DateConversion.getDateSpecificIndex(index, DATE_FORMAT));
 
         // График
         chart = (LineChart) findViewById(R.id.chart);
@@ -89,15 +86,16 @@ public class DetailActivity extends AppCompatActivity {
         detailListView = (ListView) findViewById(R.id.list);
 
         // Отправить запрос в фоновом потоке на прочтение данных с базы, а после отрисовать график
-        OneTimeWorkRequest readDatabase = new OneTimeWorkRequest.Builder(ReadDetailsWorker.class).build();
+        OneTimeWorkRequest readDetails = new OneTimeWorkRequest.Builder(ReadDetailsWorker.class).build();
         OneTimeWorkRequest viewChart = new OneTimeWorkRequest.Builder(ChartWorker.class).build();
+
         WorkManager.getInstance(this)
-                .beginWith(readDatabase)
+                .beginWith(readDetails)
                 .then(viewChart)
                 .enqueue();
 
         // Отрисовать список, если прочитали данные с бд
-        WorkManager.getInstance(this).getWorkInfoByIdLiveData(readDatabase.getId())
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(readDetails.getId())
                 .observe(this, new Observer<WorkInfo>() {
                     @Override
                     public void onChanged(WorkInfo workInfo) {
@@ -118,35 +116,6 @@ public class DetailActivity extends AppCompatActivity {
                     }
                 });
 
-    }
-
-    // Получить время (для отображения информации и заголовка)
-    // Если время больше 22 чаов, то отображать список на сегодняшний день не нужно, так как данных нет
-    private int getIndexTime() {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(TIME_FORMAT);
-        String t = simpleDateFormat.format(calendar.getTime());
-        int result = Integer.parseInt(t);
-
-        if (result >= 22)
-            return  1;
-        else
-            return 0;
-
-    }
-
-    private String getDate() {
-
-        if (index == 0)
-            return TODAY;
-        if (index == 1)
-            return TOMORROW;
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_MONTH, index);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
-
-        return simpleDateFormat.format(calendar.getTime());
     }
 
 }

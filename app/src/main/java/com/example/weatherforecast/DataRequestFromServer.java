@@ -16,7 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public final class QueryUtils {
+public final class DataRequestFromServer {
 
     private static final String LOG_TAG = MainActivity.class.getName();
 
@@ -60,16 +60,16 @@ public final class QueryUtils {
 
     private static final String FIVE_WEATHER_RESPONSE_URL =
             "http://api.openweathermap.org/data/2.5/forecast?q=Novokuznetsk,ru&lang=ru&units=metric&appid=31b762ad9bd0b94b1c2a3cecee08e837";
-    private static final String NOW_WEATHER_RESPONSE_URL =
+    private static final String CURRENT_WEATHER_RESPONSE_URL =
             "http://api.openweathermap.org/data/2.5/weather?q=Novokuznetsk,ru&lang=ru&units=metric&appid=31b762ad9bd0b94b1c2a3cecee08e837";
 
     // Частный конструктор - то есть никто не должен создавать экземпляр этого класса.
-    private QueryUtils() {
+    private DataRequestFromServer() {
 
     }
 
     // Преобразование JSON формата. Заносим данные в ArrayList<Weather> (5 дней)
-    public static ArrayList<Weather> extractWeathers() {
+    public static ArrayList<Weather> getFiveWeathersFromJSON() {
 
         ArrayList<Weather> weathers = new ArrayList<>();
 
@@ -123,13 +123,13 @@ public final class QueryUtils {
     }
 
     // Преобразование JSON формата. Заносим данные в ArrayList<Weather> (текущая погода)
-    public static Weather extractWeatherNow() {
+    public static Weather getCurrentWeatherFromJSON() {
 
         Weather weather;
 
         try {
 
-            JSONObject baseJsonResponse = new JSONObject(getStringJSON(NOW_WEATHER_RESPONSE_URL));
+            JSONObject baseJsonResponse = new JSONObject(getStringJSON(CURRENT_WEATHER_RESPONSE_URL));
 
             JSONArray weatherInfo = baseJsonResponse.getJSONArray(WEATHER_ARRAY);
             JSONObject weatherObject = weatherInfo.getJSONObject(WEATHER_OBJECT_INDEX);
@@ -150,7 +150,7 @@ public final class QueryUtils {
         }
 
 
-        return null;
+        return new Weather(NOT_USE, NOT_USE, NOT_USE, NOT_USE, NOT_USE, NOT_USE, "No data", "No data");
     }
 
     // Запрос на получение JSON (который преобразуется в строку)

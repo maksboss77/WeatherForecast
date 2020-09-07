@@ -13,6 +13,7 @@ import com.example.weatherforecast.data.Weather;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -23,11 +24,7 @@ public class DetailsAdapter extends ArrayAdapter<Weather> {
     private static final String URL_ICON_BEGIN = "http://openweathermap.org/img/wn/";
     private static final String URL_ICON_END = "@2x.png";
 
-    private static final long DATE_TRANSITION = 1000L;
     private static final String DATE_FORMAT = "HH:mm";
-
-    private static final String TODAY = "Сегодня";
-    private static final String TOMORROW = "Завтра";
 
 
     public DetailsAdapter(@NonNull Context context, int resource, @NonNull List<Weather> objects) {
@@ -49,7 +46,7 @@ public class DetailsAdapter extends ArrayAdapter<Weather> {
         Weather currentWeather = getItem(position);
 
         TextView dateTimeTextView = (TextView) listItemView.findViewById(R.id.details_date_time);
-        dateTimeTextView.setText(getDateString(currentWeather.getDate()));
+        dateTimeTextView.setText(DateConversion.getDateSpecificFormat(currentWeather.getDate(), DATE_FORMAT));
 
         TextView tempTextView = (TextView) listItemView.findViewById(R.id.details_temp);
         tempTextView.setText(currentWeather.getTemp() + "°");
@@ -79,23 +76,4 @@ public class DetailsAdapter extends ArrayAdapter<Weather> {
         return listItemView;
     }
 
-
-    private String getDateString(long timeInMilliseconds) {
-
-        Calendar today = Calendar.getInstance();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timeInMilliseconds * DATE_TRANSITION);
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
-
-        if (simpleDateFormat.format(calendar.getTime()).equals(simpleDateFormat.format(today.getTime())))
-            return TODAY;
-        else
-            today.add(Calendar.DATE, +1);
-
-        if (simpleDateFormat.format(calendar.getTime()).equals(simpleDateFormat.format(today.getTime())))
-            return TOMORROW;
-
-        return simpleDateFormat.format(calendar.getTime());
-    }
 }

@@ -13,9 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-public class AddDataWorker extends Worker {
+public class FillDatabaseWorker extends Worker {
 
-    public AddDataWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    public FillDatabaseWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 

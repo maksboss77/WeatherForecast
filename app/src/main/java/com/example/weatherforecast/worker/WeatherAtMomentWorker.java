@@ -3,15 +3,15 @@ package com.example.weatherforecast.worker;
 import android.content.Context;
 
 import com.example.weatherforecast.MainActivity;
-import com.example.weatherforecast.QueryUtils;
+import com.example.weatherforecast.DataRequestFromServer;
 
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-public class NowUploadWorker extends Worker {
+public class WeatherAtMomentWorker extends Worker {
 
-    public NowUploadWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    public WeatherAtMomentWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 
@@ -21,7 +21,7 @@ public class NowUploadWorker extends Worker {
     @Override
     public Result doWork() {
 
-        MainActivity.weather = QueryUtils.extractWeatherNow();
+        MainActivity.weather = DataRequestFromServer.getCurrentWeatherFromJSON();
 
         return Result.success();
     }

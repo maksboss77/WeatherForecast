@@ -8,18 +8,13 @@ import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
-import androidx.work.Worker;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.transition.AutoTransition;
-import android.transition.ChangeBounds;
-import android.transition.TransitionSet;
 import android.util.Log;
-import android.util.Pair;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,13 +28,12 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.weatherforecast.data.Weather;
 import com.example.weatherforecast.data.WeatherDao;
-import com.example.weatherforecast.worker.AddDataWorker;
-import com.example.weatherforecast.worker.NowUploadWorker;
-import com.example.weatherforecast.worker.UploadWorker;
-import com.example.weatherforecast.worker.CashDatabaseWorker;
+import com.example.weatherforecast.worker.FillDatabaseWorker;
+import com.example.weatherforecast.worker.WeatherAtMomentWorker;
+import com.example.weatherforecast.worker.WeatherFiveDaysWorker;
+import com.example.weatherforecast.worker.TakeSavedDataWorker;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
     // Общая переменная со всей информацией о погоде за 5 дней
     public static ArrayList<Weather> weathers;
 
-    // Общая переменная с краткой информацией о погоде за 5 дней
-    public static ArrayList<Weather> weathersFiveDay;
+    // Общая переменная с КРАТКОЙ информацией о погоде за 5 дней
+    public static ArrayList<Weather> summaryWeathers;
 
     // Публичная переменная ListView
     public ListView weatherListView;
@@ -90,25 +84,25 @@ public class MainActivity extends AppCompatActivity {
         Constraints constraints = new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build();
 
         // Берем и заполняем данные из кэша
-        OneTimeWorkRequest cashDatabaseWork = new OneTimeWorkRequest
-                .Builder(CashDatabaseWorker.class)
+        OneTimeWorkRequest takeSavedData = new OneTimeWorkRequest
+                .Builder(TakeSavedDataWorker.class)
                 .build();
 
         // Погода на текущий момент
-        OneTimeWorkRequest nowUploadWorkRequest = new OneTimeWorkRequest
-                .Builder(NowUploadWorker.class)
+        OneTimeWorkRequest weatherAtMoment = new OneTimeWorkRequest
+                .Builder(WeatherAtMomentWorker.class)
                 .setConstraints(constraints)
                 .build();
 
         // Погода за 5 дней
-        OneTimeWorkRequest uploadWorkRequest = new OneTimeWorkRequest
-                .Builder(UploadWorker.class)
+        OneTimeWorkRequest weatherFiveDays = new OneTimeWorkRequest
+                .Builder(WeatherFiveDaysWorker.class)
                 .setConstraints(constraints)
                 .build();
 
         // Заполнение БД данными о погоде
-        OneTimeWorkRequest addDatabaseWork = new OneTimeWorkRequest
-                .Builder(AddDataWorker.class)
+        OneTimeWorkRequest fillDatabase = new OneTimeWorkRequest
+                .Builder(FillDatabaseWorker.class)
                 .setConstraints(constraints)
                 .build();
 
@@ -127,15 +121,15 @@ public class MainActivity extends AppCompatActivity {
 
         // Запускаем работу (в фоновом потоке) на выполнение
         WorkManager.getInstance(this)
-                .beginWith(cashDatabaseWork)
-                .then(nowUploadWorkRequest)
-                .then(uploadWorkRequest)
-                .then(addDatabaseWork)
+                .beginWith(takeSavedData)
+                .then(weatherAtMoment)
+                .then(weatherFiveDays)
+                .then(fillDatabase)
                 .enqueue();
 
 
-        // Отрисовка списка из кэша (cashDatabaseWork)
-        WorkManager.getInstance(this).getWorkInfoByIdLiveData(cashDatabaseWork.getId())
+        // Отрисовка списка из кэша (takeSavedData)
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(takeSavedData.getId())
                 .observe(this, new Observer<WorkInfo>() {
                     @Override
                     public void onChanged(WorkInfo workInfo) {
@@ -148,14 +142,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        // Отрисовка текущей погоды после выполнения (nowUploadWorkRequest)
-        WorkManager.getInstance(this).getWorkInfoByIdLiveData(nowUploadWorkRequest.getId())
+        // Отрисовка текущей погоды после выполнения (weatherAtMoment)
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(weatherAtMoment.getId())
                 .observe(this, new Observer<WorkInfo>() {
                     @Override
                     public void onChanged(WorkInfo workInfo) {
 
                         if (workInfo.getState().isFinished()) {
-                            getView();
+                            getCurrentWeatherView();
                         } else if (workInfo.getState() == WorkInfo.State.ENQUEUED){
                             // если задача не выполнена и стоит в очереди, значит соединение
                             // с сетью отсуствует и нужно вывести соотвествующее сообщение
@@ -169,8 +163,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        // Отрисовка элементов списка после выполнения запроса (uploadWorkRequest)
-        WorkManager.getInstance(this).getWorkInfoByIdLiveData(uploadWorkRequest.getId())
+        // Отрисовка элементов списка после выполнения запроса (weatherFiveDays)
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(weatherFiveDays.getId())
                 .observe(this, new Observer<WorkInfo>() {
                     @Override
                     public void onChanged(WorkInfo workInfo) {
@@ -180,8 +174,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        // Действие после вставки строк (addDatabaseWork)
-        WorkManager.getInstance(this).getWorkInfoByIdLiveData(addDatabaseWork.getId())
+        // Действие после вставки строк (fillDatabase)
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(fillDatabase.getId())
                 .observe(this, new Observer<WorkInfo>() {
                     @Override
                     public void onChanged(WorkInfo workInfo) {
@@ -226,10 +220,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    String urlIconBegin = "http://openweathermap.org/img/wn/";
-    String urlIconEnd = "@2x.png";
+    private static final String URL_ICON_BEGIN = "http://openweathermap.org/img/wn/";
+    private static final String URL_ICON_END = "@2x.png";
 
-    private void getView() {
+    private void getCurrentWeatherView() {
 
         ImageView iconImageView = (ImageView) findViewById(R.id.image_view_icon);
         TextView tempTextView = (TextView) findViewById(R.id.text_view_temp);
@@ -237,13 +231,15 @@ public class MainActivity extends AppCompatActivity {
 
 
         try {
-            Glide
-                    .with(this)
-                    .load(urlIconBegin + weather.getIcon() + urlIconEnd)
-                    .into(iconImageView);
 
             tempTextView.setText(weather.getTemp() + getApplicationContext().getResources().getString(R.string.degree));
             descTextView.setText(String.valueOf(weather.getDescription()));
+
+            Glide
+                    .with(this)
+                    .load(URL_ICON_BEGIN + weather.getIcon() + URL_ICON_END)
+                    .into(iconImageView);
+
         } catch (NullPointerException ex) {
             Toast toast = Toast.makeText(
                     getApplicationContext(),

@@ -2,8 +2,8 @@ package com.example.weatherforecast.worker;
 
 import android.content.Context;
 
+import com.example.weatherforecast.AppDelegate;
 import com.example.weatherforecast.MainActivity;
-import com.example.weatherforecast.QueryUtils;
 import com.example.weatherforecast.WeatherAdapter;
 import com.example.weatherforecast.data.Weather;
 
@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-public class UploadWorker extends Worker {
+public class TakeSavedDataWorker extends Worker {
 
     private static final int NOT_USE = 0;
 
@@ -26,19 +26,28 @@ public class UploadWorker extends Worker {
     private static final String TODAY = "Сегодня";
     private static final String TOMORROW = "Завтра";
 
-
-    public UploadWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
+    public TakeSavedDataWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
 
-    // Получение текущей погоды и на 5 дней
+    // Читаем бд (получаем кеш погоды)
     @NonNull
     @Override
     public Result doWork() {
 
-        MainActivity.weathers = QueryUtils.extractWeathers();
-        MainActivity.weathersFiveDay = getFiveDays(MainActivity.weathers);
-        MainActivity.adapter = new WeatherAdapter(getApplicationContext(), 0, MainActivity.weathersFiveDay);
+        // Получаем данные из бд в переменную weatherDao, на данном этапе
+        MainActivity.weatherDao = ((AppDelegate) getApplicationContext())
+                .getWeatherDatabase().getWeatherDao();
+
+
+        //сначала нужно отчистить бд от старых записей.
+        MainActivity.weatherDao.deleteOldRow(getStartDay());
+
+
+        // читаем данные из бд
+        MainActivity.weathers = (ArrayList<Weather>) MainActivity.weatherDao.getAll();
+        MainActivity.summaryWeathers = getFiveDays(MainActivity.weathers);
+        MainActivity.adapter = new WeatherAdapter(getApplicationContext(), 0, MainActivity.summaryWeathers);
 
         return Result.success();
     }
@@ -141,5 +150,10 @@ public class UploadWorker extends Worker {
             return TOMORROW;
 
         return simpleDateFormat.format(calendar.getTime());
+    }
+
+    private long getStartDay() {
+
+        return Calendar.getInstance().getTimeInMillis()/1000;
     }
 }
