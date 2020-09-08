@@ -24,7 +24,6 @@ public class FillDatabaseWorker extends Worker {
     @Override
     public Result doWork() {
 
-
         MainActivity.weatherDao.insert(MainActivity.weathers);
         System.out.println((ArrayList<Weather>) MainActivity.weatherDao.getAll());
         return Result.success();

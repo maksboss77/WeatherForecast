@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Entity;
 import android.graphics.Color;
 
+import com.example.weatherforecast.DateConversion;
 import com.example.weatherforecast.DetailActivity;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
@@ -29,7 +30,6 @@ import androidx.work.WorkerParameters;
 public class ChartWorker extends Worker {
 
     private static final String DATE_FORMAT = "HH";
-    private static final long DATE_TRANSITION = 1000L;
 
     private static final String LABEL_TEXT = "Температура";
     private static final String DESCRIPTION_TEXT = "График суточной температуры";
@@ -54,13 +54,22 @@ public class ChartWorker extends Worker {
 
         List<Entry> entities = new ArrayList<Entry>();
 
+        // Заполнение информации для отображеняи на графике (время и температуру)
         for (int i = 0; i < DetailActivity.detailsWeathers.size(); i++) {
-            int time = getTime(DetailActivity.detailsWeathers.get(i).getDate());
+            int time = DateConversion.getTimeSpecificFormat(DetailActivity.detailsWeathers.get(i).getDate(), DATE_FORMAT);
             int temp = DetailActivity.detailsWeathers.get(i).getTemp();
 
             entities.add(new Entry(time, temp));
         }
 
+        // Установить свойства графика
+        setPropertiesChart(entities);
+
+        return Result.success();
+    }
+
+
+    private void setPropertiesChart(List<Entry> entities) {
 
         LineDataSet dataSet = new LineDataSet(entities, LABEL_TEXT);
 
@@ -107,7 +116,11 @@ public class ChartWorker extends Worker {
         DetailActivity.chart.setPinchZoom(false);
         DetailActivity.chart.setDoubleTapToZoomEnabled(false);
 
+        // Установка свойств осей
+        setPropertiesAxis();
+    }
 
+    private void setPropertiesAxis() {
         /** Оси (по Y левая и правая) */
         YAxis leftAxisY = DetailActivity.chart.getAxisLeft();
         YAxis rightAxisY = DetailActivity.chart.getAxisRight();
@@ -130,18 +143,5 @@ public class ChartWorker extends Worker {
         axisX.setLabelCount(DetailActivity.detailsWeathers.size());
         // Размер
         axisX.setTextSize(TEXT_SIZE);
-
-
-        return Result.success();
     }
-
-    private int getTime(long date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(date*DATE_TRANSITION);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
-        String t = simpleDateFormat.format(calendar.getTime());
-        int result = Integer.parseInt(t);
-        return result;
-    }
-
 }

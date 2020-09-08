@@ -3,6 +3,7 @@ package com.example.weatherforecast.worker;
 import android.content.Context;
 
 import com.example.weatherforecast.AppDelegate;
+import com.example.weatherforecast.DateConversion;
 import com.example.weatherforecast.MainActivity;
 import com.example.weatherforecast.WeatherAdapter;
 import com.example.weatherforecast.data.Weather;
@@ -41,7 +42,7 @@ public class TakeSavedDataWorker extends Worker {
 
 
         //сначала нужно отчистить бд от старых записей.
-        MainActivity.weatherDao.deleteOldRow(getStartDay());
+        MainActivity.weatherDao.deleteOldRow(Calendar.getInstance().getTimeInMillis() / DATE_TRANSITION);
 
 
         // читаем данные из бд
@@ -52,39 +53,28 @@ public class TakeSavedDataWorker extends Worker {
         return Result.success();
     }
 
-    // Average temperature for the day
-    private int averageTemp;
 
-    // Count temperature for the day
-    private int countTemp;
-
-    // Previous day
-    private String prevDate = "";
-    private long prevDateMilliseconds = 0;
 
     private ArrayList<Weather> getFiveDays(ArrayList<Weather> weatherArrayList ) {
 
+        int averageTemp = 0, countTemp = 0, temp = 0, prevIndex = 0;
+
+        long prevDateMilliseconds = 0;
+        String prevDate = "", date = "", icon = "";
+
         ArrayList<Weather> fiveWeather = new ArrayList<>();
-
         Weather weather;
-
-        String date = "";
-        String icon;
-        int temp;
-
-        int prevIndex = 0;
 
         for (int i = 0; i < weatherArrayList.size(); i++) {
 
             weather = weatherArrayList.get(i);
 
-            date = getDateString(weather.getDate());
+            date = DateConversion.getDateSpecificFormat(weather.getDate(), DATE_FORMAT);
             icon = weather.getIcon();
             temp = weather.getTemp();
 
             if (prevDate.isEmpty()) {
                 prevDate = date;
-                prevDateMilliseconds = weather.getDate();
                 averageTemp += temp;
                 countTemp++;
                 prevDateMilliseconds = weather.getDate();
@@ -125,35 +115,10 @@ public class TakeSavedDataWorker extends Worker {
                 prevDateMilliseconds = weather.getDate();
             }
 
-
-
         }
 
         return fiveWeather;
 
     }
 
-    private String getDateString(long timeInMilliseconds) {
-
-        Calendar today = Calendar.getInstance();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(timeInMilliseconds * DATE_TRANSITION);
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
-
-        if (simpleDateFormat.format(calendar.getTime()).equals(simpleDateFormat.format(today.getTime())))
-            return TODAY;
-        else
-            today.add(Calendar.DATE, +1);
-
-        if (simpleDateFormat.format(calendar.getTime()).equals(simpleDateFormat.format(today.getTime())))
-            return TOMORROW;
-
-        return simpleDateFormat.format(calendar.getTime());
-    }
-
-    private long getStartDay() {
-
-        return Calendar.getInstance().getTimeInMillis()/1000;
-    }
 }
