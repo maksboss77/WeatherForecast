@@ -48,7 +48,7 @@ public class DetailActivity extends AppCompatActivity {
 
     public static LineChart chart;
 
-    public static int index;
+    public static int indexSelectedElement;
 
     private static final String KEY = "index";
 
@@ -60,9 +60,7 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Получить индекс нажатого элемента (если нажатие произошло после 22,
-        // то нажатие на 1 элемент - это нажатие на "завтра"
-        index = getIntent().getExtras().getInt(KEY) + DateConversion.getIndexAfterTenPM(TIME_FORMAT);
+        indexSelectedElement = getIndex();
 
         setContentView(R.layout.activity_detail);
 
@@ -76,15 +74,31 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
-        // Установить заголовок, как дату
-        TextView title = (TextView) findViewById(R.id.text_title);
-        title.setText(DateConversion.getDateSpecificIndex(index, DATE_FORMAT));
+
+        setDateInHeader();
 
         // График
         chart = (LineChart) findViewById(R.id.chart);
 
         detailListView = (ListView) findViewById(R.id.list);
 
+        startWorker();
+
+    }
+
+    private int getIndex() {
+        int fistValueIndex = getIntent().getExtras().getInt(KEY);
+        int secondValueIndex = DateConversion.getIndexAfterTenPM(TIME_FORMAT);
+
+        return fistValueIndex + secondValueIndex;
+    }
+
+    private void setDateInHeader() {
+        TextView title = (TextView) findViewById(R.id.text_title);
+        title.setText(DateConversion.getDateInIndex(indexSelectedElement, DATE_FORMAT));
+    }
+
+    private void startWorker() {
         // Отправить запрос в фоновом потоке на прочтение данных с базы, а после отрисовать график
         OneTimeWorkRequest readDetails = new OneTimeWorkRequest.Builder(ReadDetailsWorker.class).build();
         OneTimeWorkRequest viewChart = new OneTimeWorkRequest.Builder(ChartWorker.class).build();
@@ -115,7 +129,6 @@ public class DetailActivity extends AppCompatActivity {
                         }
                     }
                 });
-
     }
 
 }

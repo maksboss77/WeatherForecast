@@ -18,7 +18,7 @@ public final class DateConversion {
 
     }
 
-    public static String getDateSpecificFormat(long timeInMilliseconds, String dateFormat) {
+    public static String getDateInMilliseconds(long timeInMilliseconds, String dateFormat) {
 
         Calendar today = Calendar.getInstance();
         Calendar calendar = Calendar.getInstance();
@@ -37,7 +37,7 @@ public final class DateConversion {
         return simpleDateFormat.format(calendar.getTime());
     }
 
-    public static String getDateSpecificIndex(int index, String dateFormat) {
+    public static String getDateInIndex(int index, String dateFormat) {
 
         if (index == 0)
             return TODAY;

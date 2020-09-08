@@ -67,7 +67,7 @@ public class WeatherFiveDaysWorker extends Worker {
 
             weather = weatherArrayList.get(i);
 
-            date = DateConversion.getDateSpecificFormat(weather.getDate(), DATE_FORMAT);
+            date = DateConversion.getDateInMilliseconds(weather.getDate(), DATE_FORMAT);
             icon = weather.getIcon();
             temp = weather.getTemp();
 

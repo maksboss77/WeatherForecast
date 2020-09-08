@@ -44,9 +44,9 @@ public class WeatherAdapter extends ArrayAdapter<Weather> {
 
         TextView dateView = (TextView) listItemView.findViewById(R.id.date);
         assert currentWeather != null;
-        dateView.setText(DateConversion.getDateSpecificFormat(currentWeather.getDate(), DATE_FORMAT));
+        dateView.setText(DateConversion.getDateInMilliseconds(currentWeather.getDate(), DATE_FORMAT));
 
-//        // Установка иконки по URL
+
         ImageView iconImage = listItemView.findViewById(R.id.icon_image);
         Glide
                 .with(getContext())

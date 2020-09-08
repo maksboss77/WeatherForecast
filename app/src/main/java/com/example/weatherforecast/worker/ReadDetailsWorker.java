@@ -32,7 +32,7 @@ public class ReadDetailsWorker extends Worker {
     @Override
     public Result doWork() {
 
-        long startDay = DateConversion.getStartDay(DetailActivity.index);
+        long startDay = DateConversion.getStartDay(DetailActivity.indexSelectedElement);
 
         long endDay = DateConversion.getEndDay(startDay);
 

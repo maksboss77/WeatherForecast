@@ -46,7 +46,7 @@ public class DetailsAdapter extends ArrayAdapter<Weather> {
         Weather currentWeather = getItem(position);
 
         TextView dateTimeTextView = (TextView) listItemView.findViewById(R.id.details_date_time);
-        dateTimeTextView.setText(DateConversion.getDateSpecificFormat(currentWeather.getDate(), DATE_FORMAT));
+        dateTimeTextView.setText(DateConversion.getDateInMilliseconds(currentWeather.getDate(), DATE_FORMAT));
 
         TextView tempTextView = (TextView) listItemView.findViewById(R.id.details_temp);
         tempTextView.setText(currentWeather.getTemp() + "°");

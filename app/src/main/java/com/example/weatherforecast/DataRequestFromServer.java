@@ -63,7 +63,6 @@ public final class DataRequestFromServer {
     private static final String CURRENT_WEATHER_RESPONSE_URL =
             "http://api.openweathermap.org/data/2.5/weather?q=Novokuznetsk,ru&lang=ru&units=metric&appid=31b762ad9bd0b94b1c2a3cecee08e837";
 
-    // Частный конструктор - то есть никто не должен создавать экземпляр этого класса.
     private DataRequestFromServer() {
 
     }
@@ -84,9 +83,7 @@ public final class DataRequestFromServer {
 
                 JSONObject mainObject = currentWeatherObject.getJSONObject(WEATHER_OBJECT_MAIN);
                 int temp = mainObject.getInt(WEATHER_OBJECT_TEMP);
-
                 int pressure = mainObject.getInt(WEATHER_OBJECT_PRESSURE);
-
                 int humidity = mainObject.getInt(WEATHER_OBJECT_HUMIDITY);
 
 
@@ -94,8 +91,8 @@ public final class DataRequestFromServer {
                 String description = "";
                 String icon = "";
                 for (int j = 0; j < weatherList.length(); j++) {
-                    JSONObject currentWeatherListObject = weatherList.getJSONObject(j);
 
+                    JSONObject currentWeatherListObject = weatherList.getJSONObject(j);
                     description = currentWeatherListObject.getString(WEATHER_OBJECT_DESCRIPTION);
                     icon = currentWeatherListObject.getString(WEATHER_OBJECT_ICON);
 
@@ -109,7 +106,6 @@ public final class DataRequestFromServer {
 
                 Weather weather = new Weather(date, temp, pressure, clouds, wind, humidity, description, icon);
                 weathers.add(weather);
-
             }
 
         } catch (JSONException e) {
@@ -117,7 +113,6 @@ public final class DataRequestFromServer {
         } catch (Exception e) {
             Log.e(LOG_TAG, "Problem URL connect", e);
         }
-
 
         return weathers;
     }
@@ -175,7 +170,7 @@ public final class DataRequestFromServer {
             urlConnection.setRequestMethod(REQUEST_METHOD_GET);
             urlConnection.setReadTimeout(READ_TIMEOUT);
             urlConnection.setConnectTimeout(CONNECT_TIMEOUT);
-            urlConnection.connect(); //тут вылетает
+            urlConnection.connect();
 
             stringBuilder = new StringBuilder();
 
@@ -189,18 +184,17 @@ public final class DataRequestFromServer {
                     stringBuilder.append(line);
                 }
             } else {
-                Log.e("QueryUtils", "Error response code: " + urlConnection.getResponseCode());
+                Log.e(LOG_TAG, "Error response code: " + urlConnection.getResponseCode());
             }
 
 
         } catch (IOException e) {
-            Log.e("QueryUtils", "Problem URLConnection or inputStream connection", e);
+            Log.e(LOG_TAG, "Problem URLConnection or inputStream connection", e);
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
             }
             if (inputStream != null) {
-                // function must handle java.io.IOException here
                 inputStream.close();
             }
         }

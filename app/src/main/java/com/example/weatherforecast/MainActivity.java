@@ -40,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
     // Имя класса
     private static final String LOG_TAG = MainActivity.class.getName();
 
+    private static final String URL_ICON_BEGIN = "http://openweathermap.org/img/wn/";
+    private static final String URL_ICON_END = "@2x.png";
+
     // Имя нажатой позиции
     private static final String KEY = "index";
 
@@ -74,11 +77,56 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // Поиск в макете ListView
         weatherListView = (ListView) findViewById(R.id.list);
+
+        startWorker();
+
+        // Отслеживание нажатий по элементам
+        // При нажатии на элемент списка открываем новый экран (детали) с указанной датой.
+        weatherListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Activity activity = MainActivity.this;
+
+                Bundle bundle = null;
+
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                    if (view != null) {
+                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(activity, view, activity.getString(R.string.anim));
+                        bundle = options.toBundle();
+                    }
+                }
+
+                Intent intent = new Intent(activity, DetailActivity.class);
+                intent.putExtra(KEY, position);
+                if (bundle == null) {
+                    activity.startActivity(intent);
+                } else {
+                    activity.startActivity(intent, bundle);
+                }
+
+            }
+        });
+
+
+    }
+
+    private void startWorker() {
+
+        // Скрываем макет, отображаем Progress Bar
+        final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear_layout);
+        linearLayout.setVisibility(View.INVISIBLE);
+
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(ProgressBar.VISIBLE);
+
 
         // Критерий: подключен Wi-Fi или мобильная передача данных
         Constraints constraints = new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build();
@@ -113,12 +161,6 @@ public class MainActivity extends AppCompatActivity {
         // 4. Обновляем данные в БД.
         // Примечание: каждый пункт выполяется, если выполнены прерыдущие действия цепочки.
 
-        // Скрываем макет, отображаем Progress Bar
-        final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear_layout);
-        linearLayout.setVisibility(View.INVISIBLE);
-        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        progressBar.setVisibility(ProgressBar.VISIBLE);
-
         // Запускаем работу (в фоновом потоке) на выполнение
         WorkManager.getInstance(this)
                 .beginWith(takeSavedData)
@@ -149,16 +191,9 @@ public class MainActivity extends AppCompatActivity {
                     public void onChanged(WorkInfo workInfo) {
 
                         if (workInfo.getState().isFinished()) {
-                            getCurrentWeatherView();
-                        } else if (workInfo.getState() == WorkInfo.State.ENQUEUED){
-                            // если задача не выполнена и стоит в очереди, значит соединение
-                            // с сетью отсуствует и нужно вывести соотвествующее сообщение
-                            Toast toast = Toast.makeText(
-                                    getApplicationContext(),
-                                    getApplicationContext().getResources().getString(R.string.network_error),
-                                    Toast.LENGTH_LONG);
-                            toast.setGravity(Gravity.CENTER, Gravity.AXIS_X_SHIFT, Gravity.AXIS_Y_SHIFT);
-                            toast.show();
+                            getViewCurrentWeather();
+                        } else if (workInfo.getState() == WorkInfo.State.ENQUEUED) {
+                            showErrorMessageInternetMissing(R.string.network_error);
                         }
                     }
                 });
@@ -184,46 +219,18 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
-
-
-
-        // Отслеживание нажатий по элементам
-        // При нажатии на элемент списка открываем новый экран (детали) с указанной датой.
-        weatherListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                Activity activity = MainActivity.this;
-
-                Bundle bundle = null;
-
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                    if (view != null) {
-                        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(activity, view, activity.getString(R.string.anim));
-                        bundle = options.toBundle();
-                    }
-                }
-
-                Intent intent = new Intent(activity, DetailActivity.class);
-                                intent.putExtra(KEY, position);
-                if (bundle == null) {
-                    activity.startActivity(intent);
-                } else {
-                    activity.startActivity(intent, bundle);
-                }
-
-            }
-        });
-
-
     }
 
+    private void showErrorMessageInternetMissing(int errorText) {
+        Toast toast = Toast.makeText(
+                getApplicationContext(),
+                getApplicationContext().getResources().getString(errorText),
+                Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, Gravity.AXIS_X_SHIFT, Gravity.AXIS_Y_SHIFT);
+        toast.show();
+    }
 
-    private static final String URL_ICON_BEGIN = "http://openweathermap.org/img/wn/";
-    private static final String URL_ICON_END = "@2x.png";
-
-    private void getCurrentWeatherView() {
+    private void getViewCurrentWeather() {
 
         ImageView iconImageView = (ImageView) findViewById(R.id.image_view_icon);
         TextView tempTextView = (TextView) findViewById(R.id.text_view_temp);
@@ -241,12 +248,7 @@ public class MainActivity extends AppCompatActivity {
                     .into(iconImageView);
 
         } catch (NullPointerException ex) {
-            Toast toast = Toast.makeText(
-                    getApplicationContext(),
-                    getApplicationContext().getResources().getString(R.string.network_error),
-                    Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.CENTER, Gravity.AXIS_X_SHIFT, Gravity.AXIS_Y_SHIFT);
-            toast.show();
+            showErrorMessageInternetMissing(R.string.network_error);
         }
     }
 
