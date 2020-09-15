@@ -93,15 +93,7 @@ public class WeatherFiveDaysWorker extends Worker {
 
                 }
 
-                Weather averageWeather = new Weather(
-                        prevDateMilliseconds,
-                        t,
-                        NOT_USE,
-                        NOT_USE,
-                        NOT_USE,
-                        NOT_USE,
-                        "",
-                        icon);
+                Weather averageWeather = new Weather(prevDateMilliseconds, t, icon);
 
                 fiveWeather.add(averageWeather);
                 averageTemp = weather.getTemp();

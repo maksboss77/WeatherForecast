@@ -134,7 +134,7 @@ public final class DataRequestFromServer {
             JSONObject mainObject = baseJsonResponse.getJSONObject(WEATHER_OBJECT_MAIN);
             int temp = mainObject.getInt(WEATHER_OBJECT_TEMP);
 
-            weather = new Weather(NOT_USE, temp, NOT_USE, NOT_USE, NOT_USE, NOT_USE, description, icon);
+            weather = new Weather(temp, description, icon);
 
             return weather;
 
@@ -145,7 +145,7 @@ public final class DataRequestFromServer {
         }
 
 
-        return new Weather(NOT_USE, NOT_USE, NOT_USE, NOT_USE, NOT_USE, NOT_USE, "No data", "No data");
+        return new Weather(0, "No data", "No data");
     }
 
     // Запрос на получение JSON (который преобразуется в строку)

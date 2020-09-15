@@ -31,21 +31,15 @@ public class TakeSavedDataWorker extends Worker {
         super(context, workerParams);
     }
 
-    // Читаем бд (получаем кеш погоды)
     @NonNull
     @Override
     public Result doWork() {
 
-        // Получаем данные из бд в переменную weatherDao, на данном этапе
         MainActivity.weatherDao = ((AppDelegate) getApplicationContext())
                 .getWeatherDatabase().getWeatherDao();
 
-
-        //сначала нужно отчистить бд от старых записей.
         MainActivity.weatherDao.deleteOldRow(Calendar.getInstance().getTimeInMillis() / DATE_TRANSITION);
 
-
-        // читаем данные из бд
         MainActivity.weathers = (ArrayList<Weather>) MainActivity.weatherDao.getAll();
         MainActivity.summaryWeathers = getFiveDays(MainActivity.weathers);
         MainActivity.adapter = new WeatherAdapter(getApplicationContext(), 0, MainActivity.summaryWeathers);
@@ -94,15 +88,7 @@ public class TakeSavedDataWorker extends Worker {
 
                 }
 
-                Weather averageWeather = new Weather(
-                        prevDateMilliseconds,
-                        t,
-                        NOT_USE,
-                        NOT_USE,
-                        NOT_USE,
-                        NOT_USE,
-                        "",
-                        icon);
+                Weather averageWeather = new Weather(prevDateMilliseconds, t, icon);
 
                 fiveWeather.add(averageWeather);
                 averageTemp = weather.getTemp();

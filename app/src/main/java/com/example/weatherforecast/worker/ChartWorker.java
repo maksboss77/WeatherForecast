@@ -47,23 +47,21 @@ public class ChartWorker extends Worker {
         super(context, workerParams);
     }
 
-    // Заполнение информации для графика + его стилизация
     @NonNull
     @Override
     public Result doWork() {
 
         List<Entry> entities = new ArrayList<Entry>();
 
-        // Заполнение информации для отображеняи на графике (время и температуру)
         for (int i = 0; i < DetailActivity.detailsWeathers.size(); i++) {
-            int time = DateConversion.getTimeSpecificFormat(DetailActivity.detailsWeathers.get(i).getDate(), DATE_FORMAT);
+            int time = DateConversion.getTimeInMilliseconds(DetailActivity.detailsWeathers.get(i).getDate(), DATE_FORMAT);
             int temp = DetailActivity.detailsWeathers.get(i).getTemp();
 
             entities.add(new Entry(time, temp));
         }
 
-        // Установить свойства графика
         setPropertiesChart(entities);
+        setPropertiesAxis();
 
         return Result.success();
     }
@@ -116,8 +114,6 @@ public class ChartWorker extends Worker {
         DetailActivity.chart.setPinchZoom(false);
         DetailActivity.chart.setDoubleTapToZoomEnabled(false);
 
-        // Установка свойств осей
-        setPropertiesAxis();
     }
 
     private void setPropertiesAxis() {

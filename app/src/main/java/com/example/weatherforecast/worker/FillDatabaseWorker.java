@@ -19,13 +19,11 @@ public class FillDatabaseWorker extends Worker {
         super(context, workerParams);
     }
 
-    // Заполнение бд данными, если id совпадает, то переписываются данные
     @NonNull
     @Override
     public Result doWork() {
 
         MainActivity.weatherDao.insert(MainActivity.weathers);
-        System.out.println((ArrayList<Weather>) MainActivity.weatherDao.getAll());
         return Result.success();
     }
 

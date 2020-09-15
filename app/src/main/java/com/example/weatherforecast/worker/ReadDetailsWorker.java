@@ -27,13 +27,11 @@ public class ReadDetailsWorker extends Worker {
         super(context, workerParams);
     }
 
-    // Информация по конкретному дню
     @NonNull
     @Override
     public Result doWork() {
 
         long startDay = DateConversion.getStartDay(DetailActivity.indexSelectedElement);
-
         long endDay = DateConversion.getEndDay(startDay);
 
         DetailActivity.detailsWeathers = (ArrayList<Weather>) MainActivity.weatherDao.oneDayQuery(startDay, endDay);

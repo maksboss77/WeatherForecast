@@ -51,7 +51,7 @@ public final class DateConversion {
         return simpleDateFormat.format(calendar.getTime());
     }
 
-    public static int getTimeSpecificFormat(long date, String dateFormat) {
+    public static int getTimeInMilliseconds(long date, String dateFormat) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(date*DATE_TRANSITION);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);

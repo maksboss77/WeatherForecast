@@ -2,6 +2,7 @@ package com.example.weatherforecast.data;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity
@@ -40,7 +41,19 @@ public class Weather {
     @ColumnInfo(name = "icon")
     private String mIcon;
 
+    @Ignore
+    public Weather(long date, int temp, String icon) {
+        mDate = date;
+        mTemp = temp;
+        mIcon = icon;
+    }
 
+    @Ignore
+    public Weather (int temp, String description, String icon) {
+        mTemp = temp;
+        mDescription = description;
+        mIcon = icon;
+    }
 
     public Weather(long date, int temp, int pressure, int clouds, int windSpeed,
                    int humidity, String description, String icon) {
