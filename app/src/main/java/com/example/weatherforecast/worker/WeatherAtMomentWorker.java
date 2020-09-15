@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.example.weatherforecast.MainActivity;
 import com.example.weatherforecast.DataRequestFromServer;
+import com.example.weatherforecast.data.DataWeather;
 
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
@@ -15,13 +16,11 @@ public class WeatherAtMomentWorker extends Worker {
         super(context, workerParams);
     }
 
-    // Запрос на получение текущей погоды
-
     @NonNull
     @Override
     public Result doWork() {
 
-        MainActivity.weather = DataRequestFromServer.getCurrentWeatherFromJSON();
+        MainActivity.weather = DataWeather.getCurrentWeatherFromJSON();
 
         return Result.success();
     }

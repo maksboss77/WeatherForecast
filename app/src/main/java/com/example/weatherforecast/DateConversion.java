@@ -60,8 +60,7 @@ public final class DateConversion {
         return result;
     }
 
-    // Получить время (для отображения информации и заголовка)
-    // Если время больше 22 чаов, то отображать список на сегодняшний день не нужно, так как данных нет
+    /**Специфика отображения погоды после 22.00 часов. Т.к. сервер выдает только данные с 1AM до 10PM*/
     public static int getIndexAfterTenPM(String timeFormat) {
 
         Calendar calendar = Calendar.getInstance();

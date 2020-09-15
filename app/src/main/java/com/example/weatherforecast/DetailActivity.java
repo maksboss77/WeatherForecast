@@ -77,9 +77,7 @@ public class DetailActivity extends AppCompatActivity {
 
         setDateInHeader();
 
-        // График
         chart = (LineChart) findViewById(R.id.chart);
-
         detailListView = (ListView) findViewById(R.id.list);
 
         startWorker();
@@ -99,7 +97,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void startWorker() {
-        // Отправить запрос в фоновом потоке на прочтение данных с базы, а после отрисовать график
+
         OneTimeWorkRequest readDetails = new OneTimeWorkRequest.Builder(ReadDetailsWorker.class).build();
         OneTimeWorkRequest viewChart = new OneTimeWorkRequest.Builder(ChartWorker.class).build();
 
@@ -108,7 +106,6 @@ public class DetailActivity extends AppCompatActivity {
                 .then(viewChart)
                 .enqueue();
 
-        // Отрисовать список, если прочитали данные с бд
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(readDetails.getId())
                 .observe(this, new Observer<WorkInfo>() {
                     @Override
@@ -119,7 +116,6 @@ public class DetailActivity extends AppCompatActivity {
                     }
                 });
 
-        // Перезагрузить график
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(viewChart.getId())
                 .observe(this, new Observer<WorkInfo>() {
                     @Override

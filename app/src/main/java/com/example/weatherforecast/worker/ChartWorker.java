@@ -71,7 +71,6 @@ public class ChartWorker extends Worker {
 
         LineDataSet dataSet = new LineDataSet(entities, LABEL_TEXT);
 
-        /** Форматирование температуры*/
         ValueFormatter formatter = new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
@@ -80,14 +79,11 @@ public class ChartWorker extends Worker {
         };
         dataSet.setValueFormatter(formatter);
 
-        // отключение легенды
         Legend legend = DetailActivity.chart.getLegend();
         legend.setEnabled(false);
 
-        // Цвет графика и линий на графике
         dataSet.setColor(android.graphics.Color.rgb(COLOR_CHART_R, COLOR_CHART_G, COLOR_CHART_B));
 
-        // цвет текста значений (температуры)
         dataSet.setValueTextColor(Color.WHITE);
 
         dataSet.setFormSize(FORM_SIZE);
@@ -95,33 +91,26 @@ public class ChartWorker extends Worker {
         LineData lineData = new LineData(dataSet);
         DetailActivity.chart.setData(lineData);
 
-        // Текст описания графика
         Description description = new Description();
         description.setText(DESCRIPTION_TEXT);
         description.setTextColor(Color.WHITE);
         DetailActivity.chart.setDescription(description);
 
-        // Текст, отображаемый, когда данных нет
         DetailActivity.chart.setNoDataText(NO_DATA_TEXT);
 
-        // Рамка графика (true/false)
         DetailActivity.chart.setDrawBorders(false);
 
-        // Сенсорное взаимодействие (true/false)
         DetailActivity.chart.setTouchEnabled(false);
 
-        // Масштабирование графика "щипком" и двойным косанием (true/false)
         DetailActivity.chart.setPinchZoom(false);
         DetailActivity.chart.setDoubleTapToZoomEnabled(false);
 
     }
 
     private void setPropertiesAxis() {
-        /** Оси (по Y левая и правая) */
         YAxis leftAxisY = DetailActivity.chart.getAxisLeft();
         YAxis rightAxisY = DetailActivity.chart.getAxisRight();
 
-        // Убираем отрисовку линий оси и меток
         leftAxisY.setDrawAxisLine(false);
         leftAxisY.setDrawLabels(false);
         rightAxisY.setDrawAxisLine(false);
@@ -129,15 +118,12 @@ public class ChartWorker extends Worker {
         leftAxisY.setDrawGridLines(false);
         rightAxisY.setDrawGridLines(false);
 
-        /** Оси (по X) */
         XAxis axisX = DetailActivity.chart.getXAxis();
         axisX.setDrawAxisLine(false);
         axisX.setPosition(XAxis.XAxisPosition.BOTTOM);
         axisX.setTextColor(Color.WHITE);
         axisX.setDrawGridLines(false);
-        // Установить количество часов на оси х
         axisX.setLabelCount(DetailActivity.detailsWeathers.size());
-        // Размер
         axisX.setTextSize(TEXT_SIZE);
     }
 }

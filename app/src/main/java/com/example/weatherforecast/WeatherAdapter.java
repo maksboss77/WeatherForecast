@@ -28,8 +28,7 @@ public class WeatherAdapter extends ArrayAdapter<Weather> {
     public WeatherAdapter(@NonNull Context context, int resource, List<Weather> weathers) {
         super(context, resource, weathers);
     }
-
-    // Отрисовка элементов списка
+    
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

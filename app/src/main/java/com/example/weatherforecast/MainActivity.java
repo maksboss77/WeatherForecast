@@ -120,48 +120,40 @@ public class MainActivity extends AppCompatActivity {
 
     private void startWorker() {
 
-        // Скрываем макет, отображаем Progress Bar
         final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear_layout);
         linearLayout.setVisibility(View.INVISIBLE);
 
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(ProgressBar.VISIBLE);
 
-
-        // Критерий: подключен Wi-Fi или мобильная передача данных
         Constraints constraints = new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build();
 
-        // Берем и заполняем данные из кэша
         OneTimeWorkRequest takeSavedData = new OneTimeWorkRequest
                 .Builder(TakeSavedDataWorker.class)
                 .build();
 
-        // Погода на текущий момент
         OneTimeWorkRequest weatherAtMoment = new OneTimeWorkRequest
                 .Builder(WeatherAtMomentWorker.class)
                 .setConstraints(constraints)
                 .build();
 
-        // Погода за 5 дней
         OneTimeWorkRequest weatherFiveDays = new OneTimeWorkRequest
                 .Builder(WeatherFiveDaysWorker.class)
                 .setConstraints(constraints)
                 .build();
 
-        // Заполнение БД данными о погоде
         OneTimeWorkRequest fillDatabase = new OneTimeWorkRequest
                 .Builder(FillDatabaseWorker.class)
                 .setConstraints(constraints)
                 .build();
 
-        // Запускаем Worker в фоновом потоке:
-        // 1. Читаем данные из Бд и отображаем ее
-        // 2. Делаем запрос на получение текущей погоды
-        // 3. Делаем запрос на получение погоды на 5 дней
-        // 4. Обновляем данные в БД.
-        // Примечание: каждый пункт выполяется, если выполнены прерыдущие действия цепочки.
+        /** Запускаем Worker в фоновом потоке:
+         *  1. Читаем данные из Бд и отображаем ее
+         *  2. Делаем запрос на получение текущей погоды
+         *  3. Делаем запрос на получение погоды на 5 дней
+         *  4. Обновляем данные в БД.
+         *  Примечание: каждый пункт выполяется, если выполнены прерыдущие действия цепочки. */
 
-        // Запускаем работу (в фоновом потоке) на выполнение
         WorkManager.getInstance(this)
                 .beginWith(takeSavedData)
                 .then(weatherAtMoment)
@@ -169,8 +161,6 @@ public class MainActivity extends AppCompatActivity {
                 .then(fillDatabase)
                 .enqueue();
 
-
-        // Отрисовка списка из кэша (takeSavedData)
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(takeSavedData.getId())
                 .observe(this, new Observer<WorkInfo>() {
                     @Override
@@ -184,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        // Отрисовка текущей погоды после выполнения (weatherAtMoment)
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(weatherAtMoment.getId())
                 .observe(this, new Observer<WorkInfo>() {
                     @Override
@@ -192,24 +181,24 @@ public class MainActivity extends AppCompatActivity {
 
                         if (workInfo.getState().isFinished()) {
                             getViewCurrentWeather();
+                            Log.e(LOG_TAG, "Погода на текущий момент получена");
                         } else if (workInfo.getState() == WorkInfo.State.ENQUEUED) {
                             showErrorMessageInternetMissing(R.string.network_error);
                         }
                     }
                 });
 
-        // Отрисовка элементов списка после выполнения запроса (weatherFiveDays)
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(weatherFiveDays.getId())
                 .observe(this, new Observer<WorkInfo>() {
                     @Override
                     public void onChanged(WorkInfo workInfo) {
                         if (workInfo.getState().isFinished()) {
                             weatherListView.setAdapter(adapter);
+                            Log.e(LOG_TAG, "Погода за пять деней получена");
                         }
                     }
                 });
 
-        // Действие после вставки строк (fillDatabase)
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(fillDatabase.getId())
                 .observe(this, new Observer<WorkInfo>() {
                     @Override
