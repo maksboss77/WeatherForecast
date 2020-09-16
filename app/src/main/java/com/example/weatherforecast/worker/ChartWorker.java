@@ -42,6 +42,13 @@ public class ChartWorker extends Worker {
     private static final float FORM_SIZE = 16f;
     private static final float TEXT_SIZE = 12f;
 
+    private List<Entry> entities;
+
+    private LineDataSet dataSet;
+    private Description description;
+    private LineData lineData;
+
+    private int sizeList;
 
     public ChartWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -51,26 +58,52 @@ public class ChartWorker extends Worker {
     @Override
     public Result doWork() {
 
-        List<Entry> entities = new ArrayList<Entry>();
+        fillEntities();
 
-        for (int i = 0; i < DetailActivity.detailsWeathers.size(); i++) {
+        setPropertiesChart(entities);
+        setPropertiesAxis();
+        return Result.success();
+    }
+
+    private void fillEntities() {
+
+        sizeList = DetailActivity.detailsWeathers.size();
+        entities = new ArrayList<Entry>();
+
+        for (int i = 0; i < sizeList; i++) {
             int time = DateConversion.getTimeInMilliseconds(DetailActivity.detailsWeathers.get(i).getDate(), DATE_FORMAT);
             int temp = DetailActivity.detailsWeathers.get(i).getTemp();
 
             entities.add(new Entry(time, temp));
         }
-
-        setPropertiesChart(entities);
-        setPropertiesAxis();
-
-        return Result.success();
     }
 
 
     private void setPropertiesChart(List<Entry> entities) {
 
-        LineDataSet dataSet = new LineDataSet(entities, LABEL_TEXT);
+        initializingDataSet(entities);
+        setNumberFormat();
+        disableLegend();
+        setGraphColor();
+        setValueTextColor(Color.WHITE);
+        setFormSize(FORM_SIZE);
+        initializingLineData();
+        setChartData();
+        setTextDescriptionGraphics(DESCRIPTION_TEXT);
+        setColorDescriptionGraphics(Color.WHITE);
+        setChartDescription();
+        setTextNoData(NO_DATA_TEXT);
+        setChartDrawBorders();
+        setTouchInteraction();
 
+    }
+
+    private void initializingDataSet(List<Entry> en) {
+        dataSet = new LineDataSet(en, LABEL_TEXT);
+    }
+
+    private void setNumberFormat() {
+        /** Форматирование температуры*/
         ValueFormatter formatter = new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
@@ -78,52 +111,123 @@ public class ChartWorker extends Worker {
             }
         };
         dataSet.setValueFormatter(formatter);
+    }
 
+    private void disableLegend() {
         Legend legend = DetailActivity.chart.getLegend();
         legend.setEnabled(false);
+    }
 
+    private void setGraphColor() {
         dataSet.setColor(android.graphics.Color.rgb(COLOR_CHART_R, COLOR_CHART_G, COLOR_CHART_B));
+    }
 
-        dataSet.setValueTextColor(Color.WHITE);
+    private void setValueTextColor(int color) {
+        dataSet.setValueTextColor(color);
+    }
 
-        dataSet.setFormSize(FORM_SIZE);
+    private void setFormSize(float formSize) {
+        dataSet.setFormSize(formSize);
+    }
 
-        LineData lineData = new LineData(dataSet);
+    private void initializingLineData() {
+        lineData = new LineData(dataSet);
+    }
+
+    private void setChartData() {
         DetailActivity.chart.setData(lineData);
+    }
 
-        Description description = new Description();
-        description.setText(DESCRIPTION_TEXT);
-        description.setTextColor(Color.WHITE);
+    private void setTextDescriptionGraphics(String descriptionText) {
+        description = new Description();
+        description.setText(descriptionText);
+    }
+
+    private void setColorDescriptionGraphics(int color) {
+        description.setTextColor(color);
+    }
+
+    private void setChartDescription() {
         DetailActivity.chart.setDescription(description);
+    }
 
-        DetailActivity.chart.setNoDataText(NO_DATA_TEXT);
+    private void setTextNoData(String noDataText) {
+        DetailActivity.chart.setNoDataText(noDataText);
+    }
 
+    private void setChartDrawBorders() {
         DetailActivity.chart.setDrawBorders(false);
+    }
 
+    private void setTouchInteraction() {
         DetailActivity.chart.setTouchEnabled(false);
-
         DetailActivity.chart.setPinchZoom(false);
         DetailActivity.chart.setDoubleTapToZoomEnabled(false);
-
     }
+
+    private YAxis leftAxisY;
+    private YAxis rightAxisY;
+
+    private XAxis axisX;
 
     private void setPropertiesAxis() {
-        YAxis leftAxisY = DetailActivity.chart.getAxisLeft();
-        YAxis rightAxisY = DetailActivity.chart.getAxisRight();
 
+        initializingChartYAxis();
+
+        disableDrawAxisYLeft();
+        disableDrawAxisYRight();
+
+        initializingChartXAxis();
+        disableDrawXAxis();
+        setPositionTextXAxis(XAxis.XAxisPosition.BOTTOM);
+        setTextColorXAxis(Color.WHITE);
+        setLabelCountXAxis(sizeList);
+        setTextSizeXAxis(TEXT_SIZE);
+    }
+
+    private void setTextSizeXAxis(float textSize) {
+        axisX.setTextSize(textSize);
+    }
+
+
+    private void initializingChartYAxis() {
+        leftAxisY = DetailActivity.chart.getAxisLeft();
+        rightAxisY = DetailActivity.chart.getAxisRight();
+    }
+
+    private void disableDrawAxisYLeft() {
         leftAxisY.setDrawAxisLine(false);
         leftAxisY.setDrawLabels(false);
+        leftAxisY.setDrawGridLines(false);
+    }
+
+    private void disableDrawAxisYRight() {
         rightAxisY.setDrawAxisLine(false);
         rightAxisY.setDrawLabels(false);
-        leftAxisY.setDrawGridLines(false);
         rightAxisY.setDrawGridLines(false);
-
-        XAxis axisX = DetailActivity.chart.getXAxis();
-        axisX.setDrawAxisLine(false);
-        axisX.setPosition(XAxis.XAxisPosition.BOTTOM);
-        axisX.setTextColor(Color.WHITE);
-        axisX.setDrawGridLines(false);
-        axisX.setLabelCount(DetailActivity.detailsWeathers.size());
-        axisX.setTextSize(TEXT_SIZE);
     }
+
+    private void initializingChartXAxis() {
+        axisX = DetailActivity.chart.getXAxis();
+    }
+
+    private void disableDrawXAxis() {
+        axisX.setDrawAxisLine(false);
+        axisX.setDrawGridLines(false);
+    }
+
+    private void setPositionTextXAxis(XAxis.XAxisPosition position) {
+        axisX.setPosition(position);
+    }
+
+    private void setTextColorXAxis(int color) {
+        axisX.setTextColor(color);
+
+    }
+
+    private void setLabelCountXAxis(int size) {
+        axisX.setLabelCount(size);
+    }
+
+
 }
