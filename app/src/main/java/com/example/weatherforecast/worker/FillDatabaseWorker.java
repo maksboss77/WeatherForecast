@@ -2,12 +2,7 @@ package com.example.weatherforecast.worker;
 
 import android.content.Context;
 
-import com.example.weatherforecast.AppDelegate;
 import com.example.weatherforecast.MainActivity;
-import com.example.weatherforecast.data.Weather;
-
-import java.util.ArrayList;
-import java.util.Calendar;
 
 import androidx.annotation.NonNull;
 import androidx.work.Worker;

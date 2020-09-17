@@ -2,15 +2,12 @@ package com.example.weatherforecast.worker;
 
 import android.content.Context;
 
-import com.example.weatherforecast.AppDelegate;
-import com.example.weatherforecast.DataRequestFromServer;
-import com.example.weatherforecast.DateConversion;
+import com.example.weatherforecast.App;
 import com.example.weatherforecast.MainActivity;
 import com.example.weatherforecast.WeatherAdapter;
 import com.example.weatherforecast.data.DataWeather;
 import com.example.weatherforecast.data.Weather;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -32,7 +29,7 @@ public class TakeSavedDataWorker extends Worker {
     @Override
     public Result doWork() {
 
-        MainActivity.weatherDao = ((AppDelegate) getApplicationContext())
+        MainActivity.weatherDao = ((App) getApplicationContext())
                 .getWeatherDatabase().getWeatherDao();
 
         MainActivity.weatherDao.deleteOldRow(Calendar.getInstance().getTimeInMillis() / DATE_TRANSITION);

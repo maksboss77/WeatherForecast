@@ -26,14 +26,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.weatherforecast.api.OpenWeatherMapApi;
 import com.example.weatherforecast.data.Weather;
 import com.example.weatherforecast.data.WeatherDao;
 import com.example.weatherforecast.worker.FillDatabaseWorker;
 import com.example.weatherforecast.worker.WeatherAtMomentWorker;
 import com.example.weatherforecast.worker.WeatherFiveDaysWorker;
 import com.example.weatherforecast.worker.TakeSavedDataWorker;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,6 +71,11 @@ public class MainActivity extends AppCompatActivity {
     //
     public static WeatherDao weatherDao;
 
+    private static String CITY = "Novokuznetsk,ru";
+    private static String LANG = "ru";
+    private static String UNITS = "metric";
+    private static String APP_ID = "31b762ad9bd0b94b1c2a3cecee08e837";
+
 
     /**
      * Текущая погода
@@ -86,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
         startWorker();
 
+        testApi();
         // Отслеживание нажатий по элементам
         // При нажатии на элемент списка открываем новый экран (детали) с указанной датой.
         weatherListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -115,6 +128,64 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+    }
+
+    private void testApi() {
+
+        Call<List<Message>> messages = App.messagesApi.messages();
+
+        messages.enqueue(new Callback<List<Message>>() {
+            @Override
+            public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
+                System.out.println("response " + response.body().size());
+            }
+
+            @Override
+            public void onFailure(Call<List<Message>> call, Throwable t) {
+                System.out.println("failure " + t);
+            }
+        });
+
+
+
+        //      Call<Weather> weatherList = App.getApi().getFiveWeathersData(CITY, LANG, UNITS, APP_ID);
+
+
+
+//        Call<List<JsonObject>> jsonList = App.getApi().getJsonObject();
+//        System.out.println("TEST: " + jsonList);
+
+//        App.getApi().getCurrentWeathersData(CITY, LANG, UNITS, APP_ID).enqueue(new Callback<List<Weather>>() {
+//            @Override
+//            public void onResponse(Call<List<Weather>> call, Response<List<Weather>> response) {
+//                weather.
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<Weather>> call, Throwable t) {
+//
+//            }
+//        });
+
+
+
+//        App.getApi().getFiveWeathersData(CITY, LANG, UNITS, APP_ID).enqueue(new Callback<List<Weather>>() {
+//            @Override
+//            public void onResponse(Call<List<Weather>> call, Response<List<Weather>> response) {
+//
+//                summaryWeathers.addAll(response.body());
+//
+//                WeatherJsonAdapter weatherJsonAdapter =
+//                        new WeatherJsonAdapter(MainActivity.this, 0, summaryWeathers);
+//                weatherListView.setAdapter(weatherJsonAdapter);
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<Weather>> call, Throwable t) {
+//                Toast.makeText(MainActivity.this, "Не удалось установить соединение", Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
     }
 
@@ -157,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
         WorkManager.getInstance(this)
                 .beginWith(takeSavedData)
                 .then(weatherAtMoment)
-                .then(weatherFiveDays)
+//                .then(weatherFiveDays)
                 .then(fillDatabase)
                 .enqueue();
 
