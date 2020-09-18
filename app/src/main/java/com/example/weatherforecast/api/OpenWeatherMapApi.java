@@ -1,6 +1,8 @@
 package com.example.weatherforecast.api;
 
 import com.example.weatherforecast.Message;
+import com.example.weatherforecast.currentjsonschema.Coord;
+import com.example.weatherforecast.currentjsonschema.Example;
 import com.example.weatherforecast.currentjsonschema.Main;
 import com.example.weatherforecast.currentjsonschema.Wind;
 import com.example.weatherforecast.data.Weather;
@@ -31,14 +33,22 @@ public interface OpenWeatherMapApi {
             @Query("units") String units,
             @Query("appid") String appId);
 
+
     @GET("weather")
-    Call<Wind> getCurrentWeathersData(
+    Call<Example> getExample(
             @Query("q") String city,
             @Query("lang") String lang,
             @Query("units") String units,
             @Query("appid") String appId);
 
-    @GET("weather?q=Novokuznetsk,ru&lang=ru&units=metric&appid=31b762ad9bd0b94b1c2a3cecee08e837")
+    @GET("weather")
+    Call<Wind> getWind(
+            @Query("q") String city,
+            @Query("lang") String lang,
+            @Query("units") String units,
+            @Query("appid") String appId);
+
+    @GET("weather")
     Call<JsonObject> getJsonObject(@Query("q") String city,
                                    @Query("lang") String lang,
                                    @Query("units") String units,

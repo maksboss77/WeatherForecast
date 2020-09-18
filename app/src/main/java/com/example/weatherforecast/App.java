@@ -19,9 +19,6 @@ public class App extends Application {
     private Retrofit retrofit;
     private static OpenWeatherMapApi openWeatherMapApi;
 
-    private Retrofit retrofitMessage;
-    private static OpenWeatherMapApi messageApi;
-
     private static final String BASE_URL = "http://api.openweathermap.org/data/2.5/";
 
 
@@ -52,7 +49,4 @@ public class App extends Application {
         return openWeatherMapApi;
     }
 
-    public static OpenWeatherMapApi getMessageApi() {
-        return messageApi;
-    }
 }

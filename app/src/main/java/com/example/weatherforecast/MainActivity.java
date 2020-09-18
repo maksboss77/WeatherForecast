@@ -27,6 +27,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.weatherforecast.api.OpenWeatherMapApi;
+import com.example.weatherforecast.currentjsonschema.Coord;
+import com.example.weatherforecast.currentjsonschema.Example;
 import com.example.weatherforecast.currentjsonschema.Main;
 import com.example.weatherforecast.currentjsonschema.Wind;
 import com.example.weatherforecast.data.Weather;
@@ -138,32 +140,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void testApi() {
 
-        //TODO: response.body приходит с нулевыми значениями
-//        Call<com.example.weatherforecast.currentjsonschema.Weather> weatherTest = App.getApi().getCurrentWeathersData(CITY, LANG, UNITS, APP_ID);
-        Call<Wind> weatherTest = App.getApi().getCurrentWeathersData(CITY, LANG, UNITS, APP_ID);
-        weatherTest.enqueue(new Callback<Wind>() {
+        Call<Example> weatherExample = App.getApi().getExample(CITY, LANG, UNITS, APP_ID);
+        weatherExample.enqueue(new Callback<Example>() {
             @Override
-            public void onResponse(Call<Wind> call, Response<Wind> response) {
-                System.out.println("response BODY " + response.body());
-                System.out.println("response Temp: " + response.body().getSpeed());
-                System.out.println("response Temp: " + response.body().getSpeed());
+            public void onResponse(Call<Example> call, Response<Example> response) {
+                System.out.println("response BODY Coord " + response.body());
+                System.out.println("response Wind: " + response.body().getWind().getSpeed());
+                System.out.println("response Temp: " + response.body().getMain().getTemp());
             }
 
             @Override
-            public void onFailure(Call<Wind> call, Throwable t) {
-                System.out.println("failure " + t);
-            }
-        });
-
-        Call<JsonObject> jsonTest = App.getApi().getJsonObject(CITY, LANG, UNITS, APP_ID);
-        jsonTest.enqueue(new Callback<JsonObject>() {
-            @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                System.out.println("Json BODY " + response.body());
-            }
-
-            @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
+            public void onFailure(Call<Example> call, Throwable t) {
                 System.out.println("failure " + t);
             }
         });
