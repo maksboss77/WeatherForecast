@@ -37,11 +37,8 @@ public interface OpenWeatherMapApi {
             @Query("appid") String appId);
 
     @GET("weather?q=Novokuznetsk,ru&lang=ru&units=metric&appid=31b762ad9bd0b94b1c2a3cecee08e837")
-    Call<List<JsonObject>> getJsonObject();
+    Call<String> getTest();
 
-    @GET("weather?q=Novokuznetsk,ru&lang=ru&units=metric&appid=31b762ad9bd0b94b1c2a3cecee08e837")
-    Call<List<JsonObject>> getTest();
-
-    @GET("messages1.json")
-    Call<List<Message>> messages();
+    @GET("message1.json")
+    Call<List<Message>> getMessage();
 }

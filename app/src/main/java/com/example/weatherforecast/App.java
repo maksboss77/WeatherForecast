@@ -16,13 +16,13 @@ public class App extends Application {
 
     private WeatherDatabase mWeatherDatabase;
 
-    private static OpenWeatherMapApi openWeatherMapApi;
     private Retrofit retrofit;
-    private Retrofit retrofitMessage;
-    public static OpenWeatherMapApi messagesApi;
+    private static OpenWeatherMapApi openWeatherMapApi;
 
-//    private static final String BASE_URL = "http://api.openweathermap.org/data/2.5/";
-    private static final String BASE_URL = "https://rawgit.com/startandroid/data/master/messages/";
+    private Retrofit retrofitMessage;
+    private static OpenWeatherMapApi messageApi;
+
+    private static final String BASE_URL = "http://api.openweathermap.org/data/2.5/";
 
 
     @Override
@@ -35,19 +35,20 @@ public class App extends Application {
                 NAME_DATABASE)
                 .build();
 
-//        retrofit = new Retrofit.Builder()
-//                .baseUrl(BASE_URL)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//        openWeatherMapApi = retrofit.create(OpenWeatherMapApi.class);
-
-
-        retrofitMessage = new Retrofit.Builder()
+        /**Основной*/
+        retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+        openWeatherMapApi = retrofit.create(OpenWeatherMapApi.class);
 
-        messagesApi = retrofitMessage.create(OpenWeatherMapApi.class);
+//        retrofitMessage = new Retrofit.Builder()
+//                .baseUrl(BASE_MESSAGE_URL)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//        messageApi = retrofitMessage.create(OpenWeatherMapApi.class);
+
+
 
     }
 
@@ -55,11 +56,11 @@ public class App extends Application {
         return mWeatherDatabase;
     }
 
-    public OpenWeatherMapApi getApi() {
+    public static OpenWeatherMapApi getApi() {
         return openWeatherMapApi;
     }
 
-    public OpenWeatherMapApi getMessageApi() {
-        return messagesApi;
+    public static OpenWeatherMapApi getMessageApi() {
+        return messageApi;
     }
 }

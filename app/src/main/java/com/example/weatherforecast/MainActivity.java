@@ -35,6 +35,9 @@ import com.example.weatherforecast.worker.WeatherFiveDaysWorker;
 import com.example.weatherforecast.worker.TakeSavedDataWorker;
 import com.google.gson.JsonObject;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,19 +136,37 @@ public class MainActivity extends AppCompatActivity {
 
     private void testApi() {
 
-        Call<List<Message>> messages = App.messagesApi.messages();
-
-        messages.enqueue(new Callback<List<Message>>() {
+        //TODO: response.body приходит с нулевыми значениями
+        Call<Weather> weatherTest = App.getApi().getCurrentWeathersData(CITY, LANG, UNITS, APP_ID);
+        weatherTest.enqueue(new Callback<Weather>() {
             @Override
-            public void onResponse(Call<List<Message>> call, Response<List<Message>> response) {
-                System.out.println("response " + response.body().size());
+            public void onResponse(Call<Weather> call, Response<Weather> response) {
+                System.out.println("response BODY " + response.body());
+                System.out.println("response TEST " + response.body().getTemp());
+                System.out.println("response2 TEST " + response.body().getTemp());
             }
 
             @Override
-            public void onFailure(Call<List<Message>> call, Throwable t) {
+            public void onFailure(Call<Weather> call, Throwable t) {
                 System.out.println("failure " + t);
             }
         });
+
+//        Call<List<Weather>> weatherList = App.getApi().getFiveWeathersData(CITY, LANG, UNITS, APP_ID);
+//        weatherList.enqueue(new Callback<List<Weather>>() {
+//            @Override
+//            public void onResponse(Call<List<Weather>> call, Response<List<Weather>> response) {
+//                System.out.println("response " + response.body().size());
+//                System.out.println("response2 " + response.body().size());
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<Weather>> call, Throwable t) {
+//                System.out.println("failure " + t);
+//            }
+//        });
+
+
 
 
 
