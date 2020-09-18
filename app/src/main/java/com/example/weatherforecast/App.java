@@ -42,14 +42,6 @@ public class App extends Application {
                 .build();
         openWeatherMapApi = retrofit.create(OpenWeatherMapApi.class);
 
-//        retrofitMessage = new Retrofit.Builder()
-//                .baseUrl(BASE_MESSAGE_URL)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//        messageApi = retrofitMessage.create(OpenWeatherMapApi.class);
-
-
-
     }
 
     public WeatherDatabase getWeatherDatabase() {

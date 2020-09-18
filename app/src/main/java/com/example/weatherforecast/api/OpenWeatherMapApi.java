@@ -1,6 +1,8 @@
 package com.example.weatherforecast.api;
 
 import com.example.weatherforecast.Message;
+import com.example.weatherforecast.currentjsonschema.Main;
+import com.example.weatherforecast.currentjsonschema.Wind;
 import com.example.weatherforecast.data.Weather;
 import com.google.gson.JsonObject;
 
@@ -18,7 +20,7 @@ import retrofit2.http.Query;
  * lang=ru
  * units=metric
  * appid=31b762ad9bd0b94b1c2a3cecee08e837
- * */
+ */
 
 public interface OpenWeatherMapApi {
 
@@ -30,11 +32,17 @@ public interface OpenWeatherMapApi {
             @Query("appid") String appId);
 
     @GET("weather")
-    Call<Weather> getCurrentWeathersData(
+    Call<Wind> getCurrentWeathersData(
             @Query("q") String city,
             @Query("lang") String lang,
             @Query("units") String units,
             @Query("appid") String appId);
+
+    @GET("weather?q=Novokuznetsk,ru&lang=ru&units=metric&appid=31b762ad9bd0b94b1c2a3cecee08e837")
+    Call<JsonObject> getJsonObject(@Query("q") String city,
+                                   @Query("lang") String lang,
+                                   @Query("units") String units,
+                                   @Query("appid") String appId);
 
     @GET("weather?q=Novokuznetsk,ru&lang=ru&units=metric&appid=31b762ad9bd0b94b1c2a3cecee08e837")
     Call<String> getTest();

@@ -27,6 +27,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.weatherforecast.api.OpenWeatherMapApi;
+import com.example.weatherforecast.currentjsonschema.Main;
+import com.example.weatherforecast.currentjsonschema.Wind;
 import com.example.weatherforecast.data.Weather;
 import com.example.weatherforecast.data.WeatherDao;
 import com.example.weatherforecast.worker.FillDatabaseWorker;
@@ -137,76 +139,34 @@ public class MainActivity extends AppCompatActivity {
     private void testApi() {
 
         //TODO: response.body приходит с нулевыми значениями
-        Call<Weather> weatherTest = App.getApi().getCurrentWeathersData(CITY, LANG, UNITS, APP_ID);
-        weatherTest.enqueue(new Callback<Weather>() {
+//        Call<com.example.weatherforecast.currentjsonschema.Weather> weatherTest = App.getApi().getCurrentWeathersData(CITY, LANG, UNITS, APP_ID);
+        Call<Wind> weatherTest = App.getApi().getCurrentWeathersData(CITY, LANG, UNITS, APP_ID);
+        weatherTest.enqueue(new Callback<Wind>() {
             @Override
-            public void onResponse(Call<Weather> call, Response<Weather> response) {
+            public void onResponse(Call<Wind> call, Response<Wind> response) {
                 System.out.println("response BODY " + response.body());
-                System.out.println("response TEST " + response.body().getTemp());
-                System.out.println("response2 TEST " + response.body().getTemp());
+                System.out.println("response Temp: " + response.body().getSpeed());
+                System.out.println("response Temp: " + response.body().getSpeed());
             }
 
             @Override
-            public void onFailure(Call<Weather> call, Throwable t) {
+            public void onFailure(Call<Wind> call, Throwable t) {
                 System.out.println("failure " + t);
             }
         });
 
-//        Call<List<Weather>> weatherList = App.getApi().getFiveWeathersData(CITY, LANG, UNITS, APP_ID);
-//        weatherList.enqueue(new Callback<List<Weather>>() {
-//            @Override
-//            public void onResponse(Call<List<Weather>> call, Response<List<Weather>> response) {
-//                System.out.println("response " + response.body().size());
-//                System.out.println("response2 " + response.body().size());
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<Weather>> call, Throwable t) {
-//                System.out.println("failure " + t);
-//            }
-//        });
+        Call<JsonObject> jsonTest = App.getApi().getJsonObject(CITY, LANG, UNITS, APP_ID);
+        jsonTest.enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                System.out.println("Json BODY " + response.body());
+            }
 
-
-
-
-
-        //      Call<Weather> weatherList = App.getApi().getFiveWeathersData(CITY, LANG, UNITS, APP_ID);
-
-
-
-//        Call<List<JsonObject>> jsonList = App.getApi().getJsonObject();
-//        System.out.println("TEST: " + jsonList);
-
-//        App.getApi().getCurrentWeathersData(CITY, LANG, UNITS, APP_ID).enqueue(new Callback<List<Weather>>() {
-//            @Override
-//            public void onResponse(Call<List<Weather>> call, Response<List<Weather>> response) {
-//                weather.
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<Weather>> call, Throwable t) {
-//
-//            }
-//        });
-
-
-
-//        App.getApi().getFiveWeathersData(CITY, LANG, UNITS, APP_ID).enqueue(new Callback<List<Weather>>() {
-//            @Override
-//            public void onResponse(Call<List<Weather>> call, Response<List<Weather>> response) {
-//
-//                summaryWeathers.addAll(response.body());
-//
-//                WeatherJsonAdapter weatherJsonAdapter =
-//                        new WeatherJsonAdapter(MainActivity.this, 0, summaryWeathers);
-//                weatherListView.setAdapter(weatherJsonAdapter);
-//            }
-//
-//            @Override
-//            public void onFailure(Call<List<Weather>> call, Throwable t) {
-//                Toast.makeText(MainActivity.this, "Не удалось установить соединение", Toast.LENGTH_SHORT).show();
-//            }
-//        });
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                System.out.println("failure " + t);
+            }
+        });
 
     }
 
