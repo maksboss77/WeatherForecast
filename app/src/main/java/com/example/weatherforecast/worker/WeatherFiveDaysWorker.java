@@ -62,7 +62,6 @@ public class WeatherFiveDaysWorker extends Worker {
 
     private void getInformationFiveDaysWeather(Response<Example> response) {
 
-        String DATE_FORMAT = "dd.MM.yyyy";
         weathers = new ArrayList<Weather>();
 
         for (int i = 0; i < response.body().getList().size(); i++) {

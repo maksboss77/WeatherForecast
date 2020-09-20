@@ -59,13 +59,12 @@ public class MainActivity extends AppCompatActivity {
     // Имя нажатой позиции
     private static final String KEY = "index";
 
-    // Общая переменная со всей информацией о погоде за 5 дней
+    // переменная со всей информацией о погоде за 5 дней
     public static ArrayList<Weather> weathers;
 
-    // Общая переменная с КРАТКОЙ информацией о погоде за 5 дней
+    // переменная с КРАТКОЙ информацией о погоде за 5 дней
     public static ArrayList<Weather> summaryWeathers;
 
-    // Публичная переменная ListView
     public ListView weatherListView;
 
     // Adapter для отрисовки 5 дней
@@ -74,18 +73,11 @@ public class MainActivity extends AppCompatActivity {
     // Погода сейчас
     public static Weather weather;
 
-    //
     public static WeatherDao weatherDao;
-
-    private static String CITY = "Novokuznetsk,ru";
-    private static String LANG = "ru";
-    private static String UNITS = "metric";
-    private static String APP_ID = "31b762ad9bd0b94b1c2a3cecee08e837";
 
     public static int tempCurrentWeather;
     public static String descriptionCurrentWeather;
     public static String iconCurrentWeather;
-
 
     /**
      * Текущая погода
@@ -93,8 +85,7 @@ public class MainActivity extends AppCompatActivity {
      * <p>
      * Сегодня и на 4 последующих дня
      * http://api.openweathermap.org/data/2.5/forecast?q=Novokuznetsk,ru&lang=ru&units=metric&appid=31b762ad9bd0b94b1c2a3cecee08e837
-     * <p>
-     * URL для получения иконки
+     *
      */
 
     @Override
@@ -178,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
                 .then(weatherFiveDays)
                 .then(fillDatabase)
                 .enqueue();
+
 
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(takeSavedData.getId())
                 .observe(this, new Observer<WorkInfo>() {
