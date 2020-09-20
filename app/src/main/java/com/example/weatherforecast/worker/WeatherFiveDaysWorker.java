@@ -7,9 +7,11 @@ import com.example.weatherforecast.App;
 import com.example.weatherforecast.MainActivity;
 import com.example.weatherforecast.WeatherAdapter;
 import com.example.weatherforecast.data.DataWeather;
+import com.example.weatherforecast.data.Weather;
 import com.example.weatherforecast.fivedaysjsonschema.Example;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
@@ -61,6 +63,7 @@ public class WeatherFiveDaysWorker extends Worker {
     private void getInformationFiveDaysWeather(Response<Example> response) {
 
         String DATE_FORMAT = "dd.MM.yyyy";
+        weathers = new ArrayList<Weather>();
 
         for (int i = 0; i < response.body().getList().size(); i++) {
             weathers.add(DataWeather.getFiveDaysWeathers(response, i));
