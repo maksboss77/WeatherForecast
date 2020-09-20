@@ -82,6 +82,10 @@ public class MainActivity extends AppCompatActivity {
     private static String UNITS = "metric";
     private static String APP_ID = "31b762ad9bd0b94b1c2a3cecee08e837";
 
+    public static int tempCurrentWeather;
+    public static String descriptionCurrentWeather;
+    public static String iconCurrentWeather;
+
 
     /**
      * Текущая погода
@@ -102,9 +106,6 @@ public class MainActivity extends AppCompatActivity {
         // Поиск в макете ListView
         weatherListView = (ListView) findViewById(R.id.list);
 
-
-        getFiveDaysWeatherApi();
-        getCurrentWeatherApi();
         startWorker();
 
         weatherListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -137,78 +138,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void getFiveDaysWeatherApi() {
-        Call<com.example.weatherforecast.fivedaysjsonschema.Example> weathersData = App.getApi().getFiveWeathersData(CITY, LANG, UNITS, APP_ID);
-        weathersData.enqueue(new Callback<com.example.weatherforecast.fivedaysjsonschema.Example>() {
-            @Override
-            public void onResponse(Call<com.example.weatherforecast.fivedaysjsonschema.Example> call, Response<com.example.weatherforecast.fivedaysjsonschema.Example> response) {
-                getInformationFiveDaysWeather(response);
-                System.out.println("Response body five days: " + response.body());
-                Log.e(LOG_TAG, "Погода на 5 дней момент получена");
-            }
-
-            @Override
-            public void onFailure(Call<com.example.weatherforecast.fivedaysjsonschema.Example> call, Throwable t) {
-                System.out.println("Failure five days: " + t);
-            }
-        });
-
-
-    }
-
-    private void getCurrentWeatherApi() {
-
-        Call<Example> weatherExample = App.getApi().getCurrentWeather(CITY, LANG, UNITS, APP_ID);
-        weatherExample.enqueue(new Callback<Example>() {
-            @Override
-            public void onResponse(Call<Example> call, Response<Example> response) {
-                getInformationCurrentWeather(response);
-                System.out.println("Response body current: " + response.body());
-                Log.e(LOG_TAG, "Погода на текущий момент получена");
-            }
-
-            @Override
-            public void onFailure(Call<Example> call, Throwable t) {
-                System.out.println("Failure current: " + t);
-            }
-        });
-
-    }
-
-
-    private void getInformationFiveDaysWeather(Response<com.example.weatherforecast.fivedaysjsonschema.Example> response) {
-
-        String DATE_FORMAT = "dd.MM.yyyy";
-
-        for (int i = 0; i < response.body().getList().size(); i++) {
-            weathers.add(DataWeather.getFiveDaysWeathers(response, i));
-        }
-
-        summaryWeathers = DataWeather.getFiveDays(weathers, DATE_FORMAT);
-        adapter = new WeatherAdapter(this, 0, summaryWeathers);
-
-    }
-
-
-
-    private void getInformationCurrentWeather(Response<Example> response) {
-        int temp = getCurrentTemp(response);
-        String description = getCurrentDescription(response);
-        String icon = getCurrentIcon(response);
-        getViewCurrentWeather(temp, description, icon);
-    }
-
-    private String getCurrentIcon(Response<Example> response) {
-        return response.body().getWeather().get(0).getIcon();
-    }
-
-    private String getCurrentDescription(Response<Example> response) {
-        return response.body().getWeather().get(0).getDescription();
-    }
-
-    private int getCurrentTemp(Response<Example> response) {
-        return (int) Math.round(response.body().getMain().getTemp());
-    }
 
     private void startWorker() {
 
@@ -248,8 +177,8 @@ public class MainActivity extends AppCompatActivity {
 
         WorkManager.getInstance(this)
                 .beginWith(takeSavedData)
-//                .then(weatherAtMoment)
-//                .then(weatherFiveDays)
+                .then(weatherAtMoment)
+                .then(weatherFiveDays)
                 .then(fillDatabase)
                 .enqueue();
 
@@ -273,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onChanged(WorkInfo workInfo) {
 
                         if (workInfo.getState().isFinished()) {
-                            //getViewCurrentWeather();
+                            getViewCurrentWeather(tempCurrentWeather, descriptionCurrentWeather, iconCurrentWeather);
                             Log.e(LOG_TAG, "Погода на текущий момент получена");
                         } else if (workInfo.getState() == WorkInfo.State.ENQUEUED) {
                             showErrorMessageInternetMissing(R.string.network_error);
@@ -286,6 +215,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onChanged(WorkInfo workInfo) {
                         if (workInfo.getState().isFinished()) {
+
                             weatherListView.setAdapter(adapter);
                             Log.e(LOG_TAG, "Погода за пять деней получена");
                         }
