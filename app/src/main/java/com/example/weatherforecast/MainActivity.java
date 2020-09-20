@@ -102,13 +102,10 @@ public class MainActivity extends AppCompatActivity {
         // Поиск в макете ListView
         weatherListView = (ListView) findViewById(R.id.list);
 
-        startWorker();
 
         getFiveDaysWeatherApi();
-
         getCurrentWeatherApi();
-
-
+        startWorker();
 
         weatherListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
@@ -147,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<com.example.weatherforecast.fivedaysjsonschema.Example> call, Response<com.example.weatherforecast.fivedaysjsonschema.Example> response) {
                 getInformationFiveDaysWeather(response);
                 System.out.println("Response body five days: " + response.body());
+                Log.e(LOG_TAG, "Погода на 5 дней момент получена");
             }
 
             @Override
@@ -166,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<Example> call, Response<Example> response) {
                 getInformationCurrentWeather(response);
                 System.out.println("Response body current: " + response.body());
+                Log.e(LOG_TAG, "Погода на текущий момент получена");
             }
 
             @Override
@@ -263,6 +262,7 @@ public class MainActivity extends AppCompatActivity {
                             linearLayout.setVisibility(linearLayout.VISIBLE);
 
                             weatherListView.setAdapter(adapter);
+                            Log.e(LOG_TAG, "Получил сохраненные данные");
                         }
                     }
                 });
@@ -317,7 +317,6 @@ public class MainActivity extends AppCompatActivity {
         ImageView iconImageView = (ImageView) findViewById(R.id.image_view_icon);
         TextView tempTextView = (TextView) findViewById(R.id.text_view_temp);
         TextView descTextView = (TextView) findViewById(R.id.text_view_description);
-
 
         try {
 
