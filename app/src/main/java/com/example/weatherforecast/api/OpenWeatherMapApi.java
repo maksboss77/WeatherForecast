@@ -1,9 +1,6 @@
 package com.example.weatherforecast.api;
 
-import com.example.weatherforecast.Message;
-import com.example.weatherforecast.currentjsonschema.Coord;
 import com.example.weatherforecast.currentjsonschema.Example;
-import com.example.weatherforecast.currentjsonschema.Main;
 import com.example.weatherforecast.currentjsonschema.Wind;
 import com.example.weatherforecast.data.Weather;
 import com.google.gson.JsonObject;
@@ -12,7 +9,6 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -27,7 +23,7 @@ import retrofit2.http.Query;
 public interface OpenWeatherMapApi {
 
     @GET("forecast")
-    Call<List<Weather>> getFiveWeathersData(
+    Call<com.example.weatherforecast.fivedaysjsonschema.Example> getFiveWeathersData(
             @Query("q") String city,
             @Query("lang") String lang,
             @Query("units") String units,
@@ -35,18 +31,12 @@ public interface OpenWeatherMapApi {
 
 
     @GET("weather")
-    Call<Example> getExample(
+    Call<Example> getCurrentWeather(
             @Query("q") String city,
             @Query("lang") String lang,
             @Query("units") String units,
             @Query("appid") String appId);
 
-    @GET("weather")
-    Call<Wind> getWind(
-            @Query("q") String city,
-            @Query("lang") String lang,
-            @Query("units") String units,
-            @Query("appid") String appId);
 
     @GET("weather")
     Call<JsonObject> getJsonObject(@Query("q") String city,
@@ -54,9 +44,6 @@ public interface OpenWeatherMapApi {
                                    @Query("units") String units,
                                    @Query("appid") String appId);
 
-    @GET("weather?q=Novokuznetsk,ru&lang=ru&units=metric&appid=31b762ad9bd0b94b1c2a3cecee08e837")
-    Call<String> getTest();
 
-    @GET("message1.json")
-    Call<List<Message>> getMessage();
+
 }

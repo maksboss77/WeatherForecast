@@ -1,4 +1,4 @@
-package com.example.weatherforecast.currentjsonschema;
+package com.example.weatherforecast.fivedaysjsonschema;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

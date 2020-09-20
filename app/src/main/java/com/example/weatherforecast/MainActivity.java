@@ -4,6 +4,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.work.Constraints;
+import androidx.work.Data;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
@@ -11,6 +12,7 @@ import androidx.work.WorkManager;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.LauncherActivity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,11 +28,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.weatherforecast.api.OpenWeatherMapApi;
-import com.example.weatherforecast.currentjsonschema.Coord;
 import com.example.weatherforecast.currentjsonschema.Example;
-import com.example.weatherforecast.currentjsonschema.Main;
-import com.example.weatherforecast.currentjsonschema.Wind;
+import com.example.weatherforecast.data.DataWeather;
 import com.example.weatherforecast.data.Weather;
 import com.example.weatherforecast.data.WeatherDao;
 import com.example.weatherforecast.worker.FillDatabaseWorker;
@@ -105,9 +104,12 @@ public class MainActivity extends AppCompatActivity {
 
         startWorker();
 
-        testApi();
-        // Отслеживание нажатий по элементам
-        // При нажатии на элемент списка открываем новый экран (детали) с указанной датой.
+        getFiveDaysWeatherApi();
+
+        getCurrentWeatherApi();
+
+
+
         weatherListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
             @Override
@@ -138,23 +140,75 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void testApi() {
+    private void getFiveDaysWeatherApi() {
+        Call<com.example.weatherforecast.fivedaysjsonschema.Example> weathersData = App.getApi().getFiveWeathersData(CITY, LANG, UNITS, APP_ID);
+        weathersData.enqueue(new Callback<com.example.weatherforecast.fivedaysjsonschema.Example>() {
+            @Override
+            public void onResponse(Call<com.example.weatherforecast.fivedaysjsonschema.Example> call, Response<com.example.weatherforecast.fivedaysjsonschema.Example> response) {
+                getInformationFiveDaysWeather(response);
+                System.out.println("Response body five days: " + response.body());
+            }
 
-        Call<Example> weatherExample = App.getApi().getExample(CITY, LANG, UNITS, APP_ID);
+            @Override
+            public void onFailure(Call<com.example.weatherforecast.fivedaysjsonschema.Example> call, Throwable t) {
+                System.out.println("Failure five days: " + t);
+            }
+        });
+
+
+    }
+
+    private void getCurrentWeatherApi() {
+
+        Call<Example> weatherExample = App.getApi().getCurrentWeather(CITY, LANG, UNITS, APP_ID);
         weatherExample.enqueue(new Callback<Example>() {
             @Override
             public void onResponse(Call<Example> call, Response<Example> response) {
-                System.out.println("response BODY Coord " + response.body());
-                System.out.println("response Wind: " + response.body().getWind().getSpeed());
-                System.out.println("response Temp: " + response.body().getMain().getTemp());
+                getInformationCurrentWeather(response);
+                System.out.println("Response body current: " + response.body());
             }
 
             @Override
             public void onFailure(Call<Example> call, Throwable t) {
-                System.out.println("failure " + t);
+                System.out.println("Failure current: " + t);
             }
         });
 
+    }
+
+
+    private void getInformationFiveDaysWeather(Response<com.example.weatherforecast.fivedaysjsonschema.Example> response) {
+
+        String DATE_FORMAT = "dd.MM.yyyy";
+
+        for (int i = 0; i < response.body().getList().size(); i++) {
+            weathers.add(DataWeather.getFiveDaysWeathers(response, i));
+        }
+
+        summaryWeathers = DataWeather.getFiveDays(weathers, DATE_FORMAT);
+        adapter = new WeatherAdapter(this, 0, summaryWeathers);
+
+    }
+
+
+
+    private void getInformationCurrentWeather(Response<Example> response) {
+        int temp = getCurrentTemp(response);
+        String description = getCurrentDescription(response);
+        String icon = getCurrentIcon(response);
+        getViewCurrentWeather(temp, description, icon);
+    }
+
+    private String getCurrentIcon(Response<Example> response) {
+        return response.body().getWeather().get(0).getIcon();
+    }
+
+    private String getCurrentDescription(Response<Example> response) {
+        return response.body().getWeather().get(0).getDescription();
+    }
+
+    private int getCurrentTemp(Response<Example> response) {
+        return (int) Math.round(response.body().getMain().getTemp());
     }
 
     private void startWorker() {
@@ -195,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
 
         WorkManager.getInstance(this)
                 .beginWith(takeSavedData)
-                .then(weatherAtMoment)
+//                .then(weatherAtMoment)
 //                .then(weatherFiveDays)
                 .then(fillDatabase)
                 .enqueue();
@@ -219,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onChanged(WorkInfo workInfo) {
 
                         if (workInfo.getState().isFinished()) {
-                            getViewCurrentWeather();
+                            //getViewCurrentWeather();
                             Log.e(LOG_TAG, "Погода на текущий момент получена");
                         } else if (workInfo.getState() == WorkInfo.State.ENQUEUED) {
                             showErrorMessageInternetMissing(R.string.network_error);
@@ -258,7 +312,7 @@ public class MainActivity extends AppCompatActivity {
         toast.show();
     }
 
-    private void getViewCurrentWeather() {
+    private void getViewCurrentWeather(long temp, String description, String icon) {
 
         ImageView iconImageView = (ImageView) findViewById(R.id.image_view_icon);
         TextView tempTextView = (TextView) findViewById(R.id.text_view_temp);
@@ -267,12 +321,12 @@ public class MainActivity extends AppCompatActivity {
 
         try {
 
-            tempTextView.setText(weather.getTemp() + getApplicationContext().getResources().getString(R.string.degree));
-            descTextView.setText(String.valueOf(weather.getDescription()));
+            tempTextView.setText(temp + getApplicationContext().getResources().getString(R.string.degree));
+            descTextView.setText(String.valueOf(description));
 
             Glide
                     .with(this)
-                    .load(URL_ICON_BEGIN + weather.getIcon() + URL_ICON_END)
+                    .load(URL_ICON_BEGIN + icon + URL_ICON_END)
                     .into(iconImageView);
 
         } catch (NullPointerException ex) {
