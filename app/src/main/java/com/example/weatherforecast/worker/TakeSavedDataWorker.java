@@ -2,6 +2,10 @@ package com.example.weatherforecast.worker;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
+
 import com.example.weatherforecast.App;
 import com.example.weatherforecast.MainActivity;
 import com.example.weatherforecast.WeatherAdapter;
@@ -10,10 +14,6 @@ import com.example.weatherforecast.data.Weather;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-
-import androidx.annotation.NonNull;
-import androidx.work.Worker;
-import androidx.work.WorkerParameters;
 
 public class TakeSavedDataWorker extends Worker {
 
@@ -40,8 +40,5 @@ public class TakeSavedDataWorker extends Worker {
 
         return Result.success();
     }
-
-
-
 
 }

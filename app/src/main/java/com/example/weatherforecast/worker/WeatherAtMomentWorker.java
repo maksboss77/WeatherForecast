@@ -3,21 +3,16 @@ package com.example.weatherforecast.worker;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.weatherforecast.App;
-import com.example.weatherforecast.MainActivity;
-import com.example.weatherforecast.DataRequestFromServer;
-import com.example.weatherforecast.currentjsonschema.Example;
-import com.example.weatherforecast.currentjsonschema.Main;
-import com.example.weatherforecast.data.DataWeather;
-
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.example.weatherforecast.App;
+import com.example.weatherforecast.MainActivity;
+import com.example.weatherforecast.currentjsonschema.CurrentWeatherJSON;
+
 import java.io.IOException;
 
-import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
 public class WeatherAtMomentWorker extends Worker {
@@ -47,12 +42,12 @@ public class WeatherAtMomentWorker extends Worker {
     }
 
     private void getCurrentWeatherApi() throws IOException {
-        Response<Example> response = App.getApi().getCurrentWeather(CITY, LANG, UNITS, APP_ID).execute();
+        Response<CurrentWeatherJSON> response = App.getApi().getCurrentWeather(CITY, LANG, UNITS, APP_ID).execute();
         getInformationCurrentWeather(response);
 
     }
 
-    private void getInformationCurrentWeather(Response<Example> response) {
+    private void getInformationCurrentWeather(Response<CurrentWeatherJSON> response) {
 
         MainActivity.tempCurrentWeather = getCurrentTemp(response);
         MainActivity.descriptionCurrentWeather = getCurrentDescription(response);
@@ -61,15 +56,15 @@ public class WeatherAtMomentWorker extends Worker {
     }
 
 
-    private String getCurrentIcon(Response<Example> response) {
+    private String getCurrentIcon(Response<CurrentWeatherJSON> response) {
         return response.body().getWeather().get(0).getIcon();
     }
 
-    private String getCurrentDescription(Response<Example> response) {
+    private String getCurrentDescription(Response<CurrentWeatherJSON> response) {
         return response.body().getWeather().get(0).getDescription();
     }
 
-    private int getCurrentTemp(Response<Example> response) {
+    private int getCurrentTemp(Response<CurrentWeatherJSON> response) {
         return (int) Math.round(response.body().getMain().getTemp());
     }
 

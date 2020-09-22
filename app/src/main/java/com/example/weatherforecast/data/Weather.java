@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey;
 @Entity
 public class Weather {
 
-    // Дата (Primary Key)
+    // Дата
     @PrimaryKey
     @ColumnInfo(name = "dt")
     private long mDate;

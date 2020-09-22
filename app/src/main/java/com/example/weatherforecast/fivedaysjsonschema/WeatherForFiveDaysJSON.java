@@ -3,7 +3,7 @@ package com.example.weatherforecast.fivedaysjsonschema;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Example {
+public class WeatherForFiveDaysJSON {
 
     @SerializedName("cod")
     @Expose

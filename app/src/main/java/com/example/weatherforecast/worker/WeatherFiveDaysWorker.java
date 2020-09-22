@@ -3,19 +3,19 @@ package com.example.weatherforecast.worker;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
+
 import com.example.weatherforecast.App;
 import com.example.weatherforecast.MainActivity;
 import com.example.weatherforecast.WeatherAdapter;
 import com.example.weatherforecast.data.DataWeather;
 import com.example.weatherforecast.data.Weather;
-import com.example.weatherforecast.fivedaysjsonschema.Example;
+import com.example.weatherforecast.fivedaysjsonschema.WeatherForFiveDaysJSON;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
-import androidx.annotation.NonNull;
-import androidx.work.Worker;
-import androidx.work.WorkerParameters;
 
 import retrofit2.Response;
 
@@ -55,12 +55,12 @@ public class WeatherFiveDaysWorker extends Worker {
 
     private void getFiveDaysWeatherApi() throws IOException {
 
-        Response<Example> response = App.getApi().getFiveWeathersData(CITY, LANG, UNITS, APP_ID).execute();
+        Response<WeatherForFiveDaysJSON> response = App.getApi().getFiveWeathersData(CITY, LANG, UNITS, APP_ID).execute();
         getInformationFiveDaysWeather(response);
 
     }
 
-    private void getInformationFiveDaysWeather(Response<Example> response) {
+    private void getInformationFiveDaysWeather(Response<WeatherForFiveDaysJSON> response) {
 
         weathers = new ArrayList<Weather>();
 

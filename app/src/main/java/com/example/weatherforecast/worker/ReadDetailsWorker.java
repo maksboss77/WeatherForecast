@@ -2,26 +2,19 @@ package com.example.weatherforecast.worker;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
+
 import com.example.weatherforecast.DateConversion;
 import com.example.weatherforecast.DetailActivity;
 import com.example.weatherforecast.DetailsAdapter;
 import com.example.weatherforecast.MainActivity;
 import com.example.weatherforecast.data.Weather;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
-import androidx.annotation.NonNull;
-import androidx.work.Worker;
-import androidx.work.WorkerParameters;
 
 public class ReadDetailsWorker extends Worker {
-
-
-
 
     public ReadDetailsWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);

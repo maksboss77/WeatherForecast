@@ -1,18 +1,7 @@
 package com.example.weatherforecast;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.work.Constraints;
-import androidx.work.Data;
-import androidx.work.NetworkType;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkInfo;
-import androidx.work.WorkManager;
-
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.app.LauncherActivity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,26 +16,24 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.work.Constraints;
+import androidx.work.NetworkType;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
+
 import com.bumptech.glide.Glide;
-import com.example.weatherforecast.currentjsonschema.Example;
-import com.example.weatherforecast.data.DataWeather;
 import com.example.weatherforecast.data.Weather;
 import com.example.weatherforecast.data.WeatherDao;
 import com.example.weatherforecast.worker.FillDatabaseWorker;
+import com.example.weatherforecast.worker.TakeSavedDataWorker;
 import com.example.weatherforecast.worker.WeatherAtMomentWorker;
 import com.example.weatherforecast.worker.WeatherFiveDaysWorker;
-import com.example.weatherforecast.worker.TakeSavedDataWorker;
-import com.google.gson.JsonObject;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -95,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Поиск в макете ListView
-        weatherListView = (ListView) findViewById(R.id.list);
+        weatherListView = findViewById(R.id.list);
 
         startWorker();
 
@@ -129,10 +116,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void startWorker() {
 
-        final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear_layout);
+        final LinearLayout linearLayout = findViewById(R.id.linear_layout);
         linearLayout.setVisibility(View.INVISIBLE);
 
-        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        final ProgressBar progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(ProgressBar.VISIBLE);
 
         Constraints constraints = new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build();
@@ -177,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onChanged(WorkInfo workInfo) {
                         if (workInfo.getState().isFinished()) {
                             progressBar.setVisibility(ProgressBar.INVISIBLE);
-                            linearLayout.setVisibility(linearLayout.VISIBLE);
+                            linearLayout.setVisibility(View.VISIBLE);
 
                             weatherListView.setAdapter(adapter);
                             Log.e(LOG_TAG, "Получил сохраненные данные");
@@ -233,9 +220,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void getViewCurrentWeather(long temp, String description, String icon) {
 
-        ImageView iconImageView = (ImageView) findViewById(R.id.image_view_icon);
-        TextView tempTextView = (TextView) findViewById(R.id.text_view_temp);
-        TextView descTextView = (TextView) findViewById(R.id.text_view_description);
+        ImageView iconImageView = findViewById(R.id.image_view_icon);
+        TextView tempTextView = findViewById(R.id.text_view_temp);
+        TextView descTextView = findViewById(R.id.text_view_description);
 
         try {
 

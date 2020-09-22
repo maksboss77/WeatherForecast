@@ -1,11 +1,7 @@
 package com.example.weatherforecast.api;
 
-import com.example.weatherforecast.currentjsonschema.Example;
-import com.example.weatherforecast.currentjsonschema.Wind;
-import com.example.weatherforecast.data.Weather;
-import com.google.gson.JsonObject;
-
-import java.util.List;
+import com.example.weatherforecast.currentjsonschema.CurrentWeatherJSON;
+import com.example.weatherforecast.fivedaysjsonschema.WeatherForFiveDaysJSON;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -23,7 +19,7 @@ import retrofit2.http.Query;
 public interface OpenWeatherMapApi {
 
     @GET("forecast")
-    Call<com.example.weatherforecast.fivedaysjsonschema.Example> getFiveWeathersData(
+    Call<WeatherForFiveDaysJSON> getFiveWeathersData(
             @Query("q") String city,
             @Query("lang") String lang,
             @Query("units") String units,
@@ -31,19 +27,10 @@ public interface OpenWeatherMapApi {
 
 
     @GET("weather")
-    Call<Example> getCurrentWeather(
+    Call<CurrentWeatherJSON> getCurrentWeather(
             @Query("q") String city,
             @Query("lang") String lang,
             @Query("units") String units,
             @Query("appid") String appId);
-
-
-    @GET("weather")
-    Call<JsonObject> getJsonObject(@Query("q") String city,
-                                   @Query("lang") String lang,
-                                   @Query("units") String units,
-                                   @Query("appid") String appId);
-
-
 
 }

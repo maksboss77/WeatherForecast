@@ -8,16 +8,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.bumptech.glide.Glide;
 import com.example.weatherforecast.data.Weather;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public class DetailsAdapter extends ArrayAdapter<Weather> {
 
@@ -44,25 +41,25 @@ public class DetailsAdapter extends ArrayAdapter<Weather> {
 
         Weather currentWeather = getItem(position);
 
-        TextView dateTimeTextView = (TextView) listItemView.findViewById(R.id.details_date_time);
+        TextView dateTimeTextView = listItemView.findViewById(R.id.details_date_time);
         dateTimeTextView.setText(DateConversion.getDateInMilliseconds(currentWeather.getDate(), DATE_FORMAT));
 
-        TextView tempTextView = (TextView) listItemView.findViewById(R.id.details_temp);
+        TextView tempTextView = listItemView.findViewById(R.id.details_temp);
         tempTextView.setText(currentWeather.getTemp() + "°");
 
-        TextView pressureTextView = (TextView) listItemView.findViewById(R.id.details_pressure);
+        TextView pressureTextView = listItemView.findViewById(R.id.details_pressure);
         pressureTextView.setText(currentWeather.getPressure() + " гПа");
 
-        TextView cloudsTextView = (TextView) listItemView.findViewById(R.id.details_clouds);
+        TextView cloudsTextView = listItemView.findViewById(R.id.details_clouds);
         cloudsTextView.setText(currentWeather.getClouds() + "%");
 
-        TextView windTextView = (TextView) listItemView.findViewById(R.id.details_wind);
+        TextView windTextView = listItemView.findViewById(R.id.details_wind);
         windTextView.setText(currentWeather.getWindSpeed() + " м/с");
 
-        TextView humidityTextView = (TextView) listItemView.findViewById(R.id.details_humidity);
+        TextView humidityTextView = listItemView.findViewById(R.id.details_humidity);
         humidityTextView.setText(currentWeather.getHumidity() + "%");
 
-        TextView descriptionTextView = (TextView) listItemView.findViewById(R.id.details_description);
+        TextView descriptionTextView = listItemView.findViewById(R.id.details_description);
         descriptionTextView.setText(currentWeather.getDescription());
 
         ImageView iconImageView = listItemView.findViewById(R.id.details_icon);

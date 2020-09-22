@@ -8,15 +8,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.bumptech.glide.Glide;
 import com.example.weatherforecast.data.Weather;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 public class WeatherAdapter extends ArrayAdapter<Weather> {
 
@@ -41,7 +39,7 @@ public class WeatherAdapter extends ArrayAdapter<Weather> {
 
         Weather currentWeather = getItem(position);
 
-        TextView dateView = (TextView) listItemView.findViewById(R.id.date);
+        TextView dateView = listItemView.findViewById(R.id.date);
         assert currentWeather != null;
         dateView.setText(DateConversion.getDateInMilliseconds(currentWeather.getDate(), DATE_FORMAT));
 
@@ -53,7 +51,7 @@ public class WeatherAdapter extends ArrayAdapter<Weather> {
                 .into(iconImage);
 
 
-        TextView tempView = (TextView) listItemView.findViewById(R.id.temp);
+        TextView tempView = listItemView.findViewById(R.id.temp);
         tempView.setText(currentWeather.getTemp() +
                 getContext().getResources().getString(R.string.degree));
         return listItemView;

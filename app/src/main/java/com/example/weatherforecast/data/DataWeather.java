@@ -1,56 +1,13 @@
 package com.example.weatherforecast.data;
 
-import android.util.Log;
-
-import com.example.weatherforecast.DataRequestFromServer;
 import com.example.weatherforecast.DateConversion;
-import com.example.weatherforecast.MainActivity;
-import com.example.weatherforecast.fivedaysjsonschema.Example;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.example.weatherforecast.fivedaysjsonschema.WeatherForFiveDaysJSON;
 
 import java.util.ArrayList;
 
 import retrofit2.Response;
 
 public final class DataWeather {
-
-    private static final String LOG_TAG = MainActivity.class.getName();
-
-    private static final int WEATHER_OBJECT_INDEX = 0;
-
-    private static final String WEATHER_ARRAY_LIST = "list";
-
-    private static final String WEATHER_OBJECT_DATE = "dt";
-
-    private static final String WEATHER_OBJECT_MAIN = "main";
-
-    private static final String WEATHER_OBJECT_TEMP = "temp";
-
-    private static final String WEATHER_OBJECT_PRESSURE = "pressure";
-
-    private static final String WEATHER_OBJECT_HUMIDITY = "humidity";
-
-    private static final String WEATHER_ARRAY = "weather";
-
-    private static final String WEATHER_OBJECT_DESCRIPTION = "description";
-
-    private static final String WEATHER_OBJECT_ICON = "icon";
-
-    private static final String WEATHER_OBJECT_CLOUDS = "clouds";
-
-    private static final String WEATHER_OBJECT_ALL = "all";
-
-    private static final String WEATHER_OBJECT_WIND = "wind";
-
-    private static final String WEATHER_OBJECT_SPEED = "speed";
-
-    private static final String FIVE_WEATHER_RESPONSE_URL =
-            "http://api.openweathermap.org/data/2.5/forecast?q=Novokuznetsk,ru&lang=ru&units=metric&appid=31b762ad9bd0b94b1c2a3cecee08e837";
-    private static final String CURRENT_WEATHER_RESPONSE_URL =
-            "http://api.openweathermap.org/data/2.5/weather?q=Novokuznetsk,ru&lang=ru&units=metric&appid=31b762ad9bd0b94b1c2a3cecee08e837";
 
     private DataWeather() {
 
@@ -114,7 +71,7 @@ public final class DataWeather {
 
     }
 
-    public static Weather getFiveDaysWeathers(Response<Example> response, int i) {
+    public static Weather getFiveDaysWeathers(Response<WeatherForFiveDaysJSON> response, int i) {
         long date = getFiveWeatherDate(response, i);
         int temp = getFiveWeatherTemp(response, i);
         int pressure = getFiveWeatherPressure(response, i);
@@ -127,36 +84,36 @@ public final class DataWeather {
         return new Weather(date, temp, pressure, clouds, wind, humidity, description, icon);
     }
 
-    private static String getFiveWeatherIcon(Response<com.example.weatherforecast.fivedaysjsonschema.Example> response, int i) {
+    private static String getFiveWeatherIcon(Response<WeatherForFiveDaysJSON> response, int i) {
         return response.body().getList().get(i).getWeather().get(0).getIcon();
     }
 
-    private static String getFiveWeatherDescription(Response<com.example.weatherforecast.fivedaysjsonschema.Example> response, int i) {
+    private static String getFiveWeatherDescription(Response<WeatherForFiveDaysJSON> response, int i) {
         return response.body().getList().get(i).getWeather().get(0).getDescription();
 
     }
 
-    private static int getFiveWeatherHumidity(Response<com.example.weatherforecast.fivedaysjsonschema.Example> response, int i) {
+    private static int getFiveWeatherHumidity(Response<WeatherForFiveDaysJSON> response, int i) {
         return response.body().getList().get(i).getMain().getHumidity();
     }
 
-    private static int getFiveWeatherWind(Response<com.example.weatherforecast.fivedaysjsonschema.Example> response, int i) {
+    private static int getFiveWeatherWind(Response<WeatherForFiveDaysJSON> response, int i) {
         return (int) Math.round(response.body().getList().get(i).getWind().getSpeed());
     }
 
-    private static int getFiveWeatherClouds(Response<com.example.weatherforecast.fivedaysjsonschema.Example> response, int i) {
+    private static int getFiveWeatherClouds(Response<WeatherForFiveDaysJSON> response, int i) {
         return response.body().getList().get(i).getClouds().getAll();
     }
 
-    private static int getFiveWeatherPressure(Response<com.example.weatherforecast.fivedaysjsonschema.Example> response, int i) {
+    private static int getFiveWeatherPressure(Response<WeatherForFiveDaysJSON> response, int i) {
         return response.body().getList().get(i).getMain().getPressure();
     }
 
-    private static int getFiveWeatherTemp(Response<com.example.weatherforecast.fivedaysjsonschema.Example> response, int i) {
+    private static int getFiveWeatherTemp(Response<WeatherForFiveDaysJSON> response, int i) {
         return (int) Math.round(response.body().getList().get(i).getMain().getTemp());
     }
 
-    private static long getFiveWeatherDate(Response<com.example.weatherforecast.fivedaysjsonschema.Example> response, int i) {
+    private static long getFiveWeatherDate(Response<WeatherForFiveDaysJSON> response, int i) {
         return response.body().getList().get(i).getDt();
     }
 }
